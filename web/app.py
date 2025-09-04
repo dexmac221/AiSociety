@@ -369,6 +369,52 @@ async def get_chat_interface():
                 border: 1px solid #bbdefb;
             }
             
+            .optimization-info {
+                display: flex;
+                align-items: center;
+                gap: 6px;
+                font-size: 11px;
+                margin-top: 6px;
+                padding: 3px 8px;
+                background: linear-gradient(135deg, #fff3e0 0%, #fce4ec 100%);
+                color: #e65100;
+                border-radius: 8px;
+                border: 1px solid #ffcc02;
+                opacity: 0.9;
+            }
+            
+            .query-enhanced {
+                font-weight: 600;
+                color: #ff6f00;
+            }
+            
+            .query-comparison {
+                margin: 8px 0;
+                padding: 8px;
+                background: linear-gradient(135deg, #f3e5f5 0%, #e8f5e8 100%);
+                border-radius: 8px;
+                border-left: 4px solid #4caf50;
+                font-size: 12px;
+            }
+            
+            .query-original {
+                color: #666;
+                font-style: italic;
+                margin-bottom: 4px;
+            }
+            
+            .query-optimized {
+                color: #2e7d32;
+                font-weight: 500;
+            }
+            
+            .query-label {
+                font-weight: 600;
+                font-size: 10px;
+                text-transform: uppercase;
+                margin-right: 4px;
+            }
+            
             .model-icon {
                 font-size: 14px;
             }
@@ -800,15 +846,47 @@ async def get_chat_interface():
                 const messageDiv = document.createElement('div');
                 messageDiv.className = 'message assistant';
                 const messageText = data.message || data.response || 'No response received';
+                
+                // Create model info with optimization details
+                let modelInfoHtml = `
+                    <div class="model-info">
+                        <span class="model-icon">🎯</span>
+                        <span>${data.model}</span>
+                        <span style="margin-left: 8px; opacity: 0.7;">
+                            ${data.response_time_ms}ms
+                        </span>
+                    </div>
+                `;
+                
+                // Add query optimization info and comparison if available
+                let queryComparisonHtml = '';
+                if (data.query_enhanced) {
+                    const optimizationType = data.optimization_applied || 'enhanced';
+                    modelInfoHtml += `
+                        <div class="optimization-info">
+                            <span>🔧</span>
+                            <span class="query-enhanced">Query ${optimizationType}</span>
+                            <span style="opacity: 0.8;">by ${data.meta_model || 'OpenAI'}</span>
+                        </div>
+                    `;
+                    
+                    // Show query comparison
+                    queryComparisonHtml = `
+                        <div class="query-comparison">
+                            <div class="query-original">
+                                <span class="query-label">Original:</span>${escapeHtml(data.original_query || 'N/A')}
+                            </div>
+                            <div class="query-optimized">
+                                <span class="query-label">Enhanced:</span>${escapeHtml(data.optimized_query || 'N/A')}
+                            </div>
+                        </div>
+                    `;
+                }
+                
                 messageDiv.innerHTML = `
                     <div class="message-content">
-                        <div class="model-info">
-                            <span class="model-icon">🎯</span>
-                            <span>${data.model}</span>
-                            <span style="margin-left: 8px; opacity: 0.7;">
-                                ${data.response_time_ms}ms
-                            </span>
-                        </div>
+                        ${modelInfoHtml}
+                        ${queryComparisonHtml}
                         <div>${formatMessage(messageText)}</div>
                     </div>
                 `;
@@ -816,9 +894,18 @@ async def get_chat_interface():
                 messagesArea.appendChild(messageDiv);
                 scrollToBottom();
                 
-                // Update status
-                const specs = data.specializations_used ? data.specializations_used.join(', ') : 'general';
-                statusText.textContent = `Last: ${data.model} (${specs}) - ${data.response_time_ms}ms`;
+                // Update status with optimization info
+                let statusText = `Last: ${data.model}`;
+                if (data.specializations_used) {
+                    const specs = data.specializations_used.join(', ');
+                    statusText += ` (${specs})`;
+                }
+                if (data.query_enhanced) {
+                    statusText += ` - Query optimized`;
+                }
+                statusText += ` - ${data.response_time_ms}ms`;
+                
+                document.getElementById('status-text').textContent = statusText;
                 
                 // Re-enable input
                 messageInput.disabled = false;
@@ -833,6 +920,12 @@ async def get_chat_interface():
                     .replace(/```([\\s\\S]*?)```/g, '<pre><code>$1</code></pre>')
                     .replace(/`([^`]+)`/g, '<code>$1</code>')
                     .replace(/\\n/g, '<br>');
+            }
+            
+            function escapeHtml(text) {
+                const div = document.createElement('div');
+                div.textContent = text;
+                return div.innerHTML;
             }
             
             function sendMessage(message = null) {

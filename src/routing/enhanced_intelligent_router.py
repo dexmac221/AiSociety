@@ -301,7 +301,7 @@ class EnhancedIntelligentRouter(IntelligentModelRouter):
         Generate response using the specified model with routing context.
         
         Args:
-            query (str): User query
+            query (str): User query (original)
             model_name (str): Selected model name
             context (Optional[Dict]): Query context
             routing_info (Dict[str, Any]): Information from routing decision
@@ -326,15 +326,24 @@ class EnhancedIntelligentRouter(IntelligentModelRouter):
                 logger.error(f"❌ Failed to download {model_name}: {e}")
                 return super().query_model(query, model_name=None, context=context)
         
+        # Use optimized query if available, otherwise use original
+        actual_query = routing_info.get('optimized_query', query)
+        
         # Generate response using the selected model
         try:
             start_response_time = time.time()
             
             # Use the base router's ollama client directly
-            logger.info(f"🤖 Generating response with {model_name}...")
+            if actual_query != query:
+                logger.info(f"🔧 Using optimized query for {model_name}")
+                logger.info(f"📝 Original: {query[:80]}...")
+                logger.info(f"✨ Enhanced: {actual_query[:80]}...")
+            else:
+                logger.info(f"🤖 Generating response with {model_name}...")
+            
             response = self.ollama_client.generate(
                 model=model_name,
-                prompt=query,
+                prompt=actual_query,  # Use the optimized query here
                 options={
                     'temperature': 0.7,
                     'top_k': 40,
@@ -359,7 +368,13 @@ class EnhancedIntelligentRouter(IntelligentModelRouter):
                 'specializations': routing_info.get('specializations_needed', []),
                 'alternatives': routing_info.get('alternatives', []),
                 'model_info': model_info,
-                'timestamp': datetime.now().isoformat()
+                'timestamp': datetime.now().isoformat(),
+                # Query optimization metadata
+                'original_query': query,
+                'optimized_query': actual_query,
+                'query_enhanced': routing_info.get('query_enhanced', False),
+                'optimization_applied': routing_info.get('optimization_applied', 'none'),
+                'optimization_reasoning': routing_info.get('optimization_reasoning', 'No optimization applied')
             }
             
             # Update performance tracking

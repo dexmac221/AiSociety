@@ -94,10 +94,11 @@ class OpenAIMetaRouter:
     
     def generate_routing_prompt(self, query: str) -> str:
         """
-        Generate a dynamic prompt for OpenAI model selection.
+        Generate a dynamic prompt for OpenAI model selection and query optimization.
         
         Creates a comprehensive prompt that includes the current model inventory,
-        their capabilities, and asks the OpenAI model to select the best option.
+        their capabilities, and asks the OpenAI model to both select the best option
+        AND optimize the user's query for better results.
         
         Args:
             query (str): User's input query
@@ -124,13 +125,19 @@ class OpenAIMetaRouter:
         
         models_text = "\n\n".join(model_descriptions)
         
-        prompt = f"""You are an expert AI model router for a local LLM system. Your job is to analyze user queries and recommend the BEST local model for response generation.
+        prompt = f"""You are an expert AI model router AND query optimizer for a local LLM system. Your job is to:
+1. Analyze user queries and recommend the BEST local model
+2. Optimize the query to get maximum performance from the selected model
 
 ## Available Local Models:
 {models_text}
 
-## Query Analysis Task:
-Analyze this user query and recommend the optimal model: "{query}"
+## Original User Query:
+"{query}"
+
+## Your Dual Task:
+1. **Model Selection**: Choose the optimal model for this query
+2. **Query Optimization**: Enhance/rephrase the query to get better results from the selected model
 
 ## Your Response Format (JSON only):
 {{
@@ -142,31 +149,40 @@ Analyze this user query and recommend the optimal model: "{query}"
     "specializations_needed": ["spec1", "spec2"],
     "alternative_models": ["backup-model-1", "backup-model-2"],
     "expected_performance": "excellent|good|fair",
-    "download_recommendation": true
+    "download_recommendation": true,
+    "optimized_query": "Enhanced version of the user's query optimized for the selected model",
+    "optimization_applied": "brief|moderate|extensive|none",
+    "optimization_reasoning": "Explanation of how and why the query was optimized"
 }}
 
-## Selection Criteria (Priority Order):
+## Model Selection Criteria (Priority Order):
 1. **Specialization Match**: Choose models with specializations matching the query type
 2. **Local Availability**: Prefer locally available models (✅ Local) over download needed
 3. **Performance Score**: Higher scores indicate better recent performance
 4. **Model Size**: Consider complexity vs resource efficiency
 5. **Task Complexity**: Match model capability to query complexity
 
-## Query Types & Best Models:
-- **Coding/Programming**: qwen2.5-coder, deepseek-coder-v2, codellama
-- **Mathematics**: phi3, qwen2.5, mistral
-- **Creative Writing**: llama3.2, gemma2, neural-chat
-- **Reasoning/Analysis**: mistral, llama3.1, command-r
-- **General Questions**: llama3.2, gemma2, qwen2.5
-- **Conversation**: neural-chat, vicuna, llama3.2
+## Query Optimization Guidelines:
+- **Coding Queries**: Add context, specify language, include expected output format
+- **Math Queries**: Clarify what type of solution is needed, add step-by-step requests
+- **Creative Queries**: Add style preferences, length requirements, tone specifications  
+- **General Queries**: Add context for better understanding, specify desired detail level
+- **Complex Queries**: Break down into clear sub-components, add examples if helpful
 
-## Important Notes:
-- If no local models are available, recommend the best model even if download is needed
-- Consider download time vs performance trade-offs
-- Provide 2-3 alternative models in case the primary choice fails
-- Be specific about why you chose this model over others
+## Query Types & Optimization Examples:
+- **Coding**: "Write Python function" → "Write a well-documented Python function with error handling that..."
+- **Math**: "Calculate X" → "Calculate X step-by-step, showing all work and explaining each step"
+- **Creative**: "Write story" → "Write a [genre] story of [length] with [tone] about [specific topic]"
+- **General**: "Explain X" → "Explain X in simple terms with examples, suitable for [audience level]"
 
-Analyze the query and respond with JSON only:"""
+## Optimization Rules:
+- Keep the core intent unchanged
+- Add helpful context and specificity
+- Don't over-complicate simple queries
+- Enhance clarity and reduce ambiguity
+- Tailor to the selected model's strengths
+
+Analyze the query, select the best model, optimize the query, and respond with JSON only:"""
 
         return prompt
     
@@ -364,6 +380,11 @@ Analyze the query and respond with JSON only:"""
                 recommended = available_models[0]  # Fallback to first available
                 logger.warning(f"⚠️ Recommended model not found, using {recommended}")
         
+        # Get optimized query or fallback to original
+        optimized_query = decision.get('optimized_query', query)
+        if not optimized_query or optimized_query.strip() == "":
+            optimized_query = query
+            
         # Create standardized response
         validated = {
             'model': recommended,
@@ -377,8 +398,20 @@ Analyze the query and respond with JSON only:"""
             'download_needed': not self.local_models.get(recommended, {}).get('local', False),
             'routing_method': 'openai_meta',
             'meta_model_used': self.model,
-            'timestamp': datetime.now().isoformat()
+            'timestamp': datetime.now().isoformat(),
+            # New query optimization fields
+            'original_query': query,
+            'optimized_query': optimized_query,
+            'optimization_applied': decision.get('optimization_applied', 'none'),
+            'optimization_reasoning': decision.get('optimization_reasoning', 'No optimization applied'),
+            'query_enhanced': optimized_query != query
         }
+        
+        # Log optimization info
+        if optimized_query != query:
+            logger.info(f"🔧 Query optimized: {decision.get('optimization_applied', 'moderate')} enhancement applied")
+            logger.info(f"📝 Original: {query[:100]}...")
+            logger.info(f"✨ Optimized: {optimized_query[:100]}...")
         
         return validated
     
