@@ -15,7 +15,7 @@ sys.path.append(os.path.join(os.path.dirname(os.path.dirname(__file__)), 'src'))
 try:
     import ollama
     from daemon.model_discovery import ModelDiscoveryDaemon
-    from routing.intelligent_router import IntelligentModelRouter
+    from routing.enhanced_intelligent_router import EnhancedIntelligentRouter
     
     # Configure Ollama client for remote host
     import json
@@ -23,7 +23,8 @@ try:
     if os.path.exists(config_file):
         with open(config_file, 'r') as f:
             config = json.load(f)
-        ollama_host = config.get('ollama_host', 'http://localhost:11434')
+        # Check for new ollama_config format first, then fallback to old ollama_host
+        ollama_host = config.get('ollama_config', {}).get('host') or config.get('ollama_host', 'http://localhost:11434')
         ollama._client._base_url = ollama_host
         print(f"🔗 Configured Ollama for: {ollama_host}")
         
@@ -36,10 +37,14 @@ app = FastAPI(title="AI Society - Dynamic Model Router", version="1.0.0")
 
 # Initialize router
 try:
-    router = IntelligentModelRouter()
-    print("✅ Router initialized successfully")
+    print(f"🔍 Web app working directory: {os.getcwd()}")
+    print(f"🔍 Web app config path: {os.path.abspath('config/router_config.json')}")
+    print(f"🔍 Config exists: {os.path.exists('config/router_config.json')}")
+    
+    router = EnhancedIntelligentRouter()
+    print("✅ Enhanced Router with OpenAI meta-routing initialized successfully")
 except Exception as e:
-    print(f"❌ Failed to initialize router: {e}")
+    print(f"❌ Failed to initialize enhanced router: {e}")
     router = None
 
 # Connection manager for WebSocket
@@ -1029,7 +1034,7 @@ async def websocket_endpoint(websocket: WebSocket):
                 })
                 
                 # Process query with router
-                result = router.query_model(query, context=context)
+                result = router.query_model(query, model_name=None, context=context)
                 print(f"📋 Result from router: {list(result.keys()) if isinstance(result, dict) else type(result)}")
                 
                 # Update context for next query

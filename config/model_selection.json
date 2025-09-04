@@ -1,0 +1,189 @@
+{
+  "model_selection_strategies": {
+    "gpt41_mini_routing": {
+      "enabled": true,
+      "description": "Use GPT-4.1-mini for intelligent model routing",
+      "confidence_threshold": 0.75,
+      "fallback_to_local": true,
+      "cache_decisions": true,
+      "prompt_template": "advanced_dynamic"
+    },
+    
+    "local_keyword_routing": {
+      "enabled": true,
+      "description": "Fallback keyword-based routing",
+      "keywords": {
+        "coding": ["code", "python", "javascript", "debug", "function", "class", "programming"],
+        "math": ["equation", "calculate", "solve", "mathematics", "algebra", "calculus"],
+        "creative": ["story", "write", "creative", "poem", "narrative", "fiction"],
+        "reasoning": ["analyze", "logic", "reason", "problem", "think", "deduce"],
+        "general": ["explain", "what", "how", "describe", "tell", "help"]
+      }
+    },
+    
+    "performance_based_routing": {
+      "enabled": true,
+      "description": "Route based on historical performance",
+      "min_sample_size": 5,
+      "success_weight": 0.6,
+      "speed_weight": 0.4
+    }
+  },
+
+  "model_categories": {
+    "coding_specialists": {
+      "primary": [
+        {
+          "name": "qwen2.5-coder:7b",
+          "specializations": ["python", "javascript", "debugging", "code_review"],
+          "performance_score": 92,
+          "size": "4.7GB",
+          "priority": 1
+        },
+        {
+          "name": "deepseek-coder-v2:16b",
+          "specializations": ["complex_algorithms", "system_programming", "optimization"],
+          "performance_score": 95,
+          "size": "9.0GB",
+          "priority": 2
+        },
+        {
+          "name": "codellama:7b",
+          "specializations": ["general_coding", "documentation", "refactoring"],
+          "performance_score": 88,
+          "size": "3.8GB",
+          "priority": 3
+        }
+      ]
+    },
+
+    "math_specialists": {
+      "primary": [
+        {
+          "name": "qwen2.5:7b",
+          "specializations": ["algebra", "calculus", "statistics", "problem_solving"],
+          "performance_score": 90,
+          "size": "4.4GB",
+          "priority": 1
+        },
+        {
+          "name": "phi3:mini",
+          "specializations": ["quick_calculations", "basic_math", "logic"],
+          "performance_score": 85,
+          "size": "2.3GB",
+          "priority": 2
+        },
+        {
+          "name": "gemma2:9b",
+          "specializations": ["advanced_math", "proofs", "theoretical"],
+          "performance_score": 93,
+          "size": "5.4GB",
+          "priority": 3
+        }
+      ]
+    },
+
+    "creative_specialists": {
+      "primary": [
+        {
+          "name": "llama3.2:3b",
+          "specializations": ["storytelling", "creative_writing", "brainstorming"],
+          "performance_score": 87,
+          "size": "2.0GB",
+          "priority": 1
+        },
+        {
+          "name": "neural-chat:7b",
+          "specializations": ["dialogue", "conversation", "roleplay"],
+          "performance_score": 89,
+          "size": "4.1GB",
+          "priority": 2
+        },
+        {
+          "name": "yi:9b",
+          "specializations": ["long_form_content", "poetry", "fiction"],
+          "performance_score": 91,
+          "size": "5.0GB",
+          "priority": 3
+        }
+      ]
+    },
+
+    "general_purpose": {
+      "primary": [
+        {
+          "name": "llama3.2:3b",
+          "specializations": ["general_qa", "explanations", "summaries"],
+          "performance_score": 86,
+          "size": "2.0GB",
+          "priority": 1
+        },
+        {
+          "name": "mistral:7b",
+          "specializations": ["reasoning", "analysis", "research"],
+          "performance_score": 88,
+          "size": "4.1GB",
+          "priority": 2
+        },
+        {
+          "name": "gemma2:9b",
+          "specializations": ["complex_reasoning", "research", "detailed_analysis"],
+          "performance_score": 90,
+          "size": "5.4GB",
+          "priority": 3
+        }
+      ]
+    }
+  },
+
+  "routing_rules": {
+    "size_constraints": {
+      "prefer_under_5gb": true,
+      "max_size_gb": 10,
+      "auto_download_under_gb": 5
+    },
+    
+    "performance_thresholds": {
+      "min_score_for_complex": 85,
+      "min_score_for_simple": 75,
+      "prefer_local_if_score_diff_under": 10
+    },
+    
+    "download_policies": {
+      "auto_download_essential": true,
+      "prompt_for_large_models": true,
+      "max_concurrent_downloads": 1,
+      "retry_failed_downloads": 3
+    }
+  },
+
+  "gpt4o_routing_prompts": {
+    "system_prompt": "You are an AI model router for a local AI system. Analyze queries and recommend the optimal local model based on specialization, performance, and availability.",
+    
+    "query_analysis_template": "Analyze this query: '{query}'\n\nAvailable models:\n{model_inventory}\n\nRecommend the best model with reasoning in JSON format.",
+    
+    "response_format": {
+      "required_fields": ["recommended_model", "confidence", "reasoning", "query_type"],
+      "optional_fields": ["alternatives", "download_if_needed", "complexity_score"],
+      "confidence_scale": "0.0 to 1.0"
+    }
+  },
+
+  "fallback_strategy": {
+    "order": [
+      "gpt41_mini_routing",
+      "performance_based_routing", 
+      "local_keyword_routing",
+      "default_model"
+    ],
+    
+    "default_models": {
+      "coding": "qwen2.5-coder:7b",
+      "math": "phi3:mini",
+      "creative": "llama3.2:3b",
+      "general": "llama3.2:3b"
+    },
+    
+    "emergency_fallback": "llama3.2:3b"
+  }
+}

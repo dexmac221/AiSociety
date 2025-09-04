@@ -118,20 +118,23 @@ class IntelligentModelRouter:
             try:
                 with open(self.config_file, 'r') as f:
                     loaded_config = json.load(f)
-                    # Merge with defaults
+                    # Merge with defaults, but preserve existing settings
                     self.config = {**default_config, **loaded_config}
-            except:
+                    logger.info(f"✅ Configuration loaded from {self.config_file}")
+            except Exception as e:
+                logger.warning(f"⚠️ Error loading config: {e}, using defaults")
                 self.config = default_config
         else:
             self.config = default_config
-            
-        # Save config
-        with open(self.config_file, 'w') as f:
-            json.dump(self.config, f, indent=2)
+            logger.info(f"📄 Creating default configuration at {self.config_file}")
+            # Save config only if it doesn't exist
+            with open(self.config_file, 'w') as f:
+                json.dump(self.config, f, indent=2)
     
     def _setup_ollama_client(self):
         """Setup Ollama client with configured host"""
-        ollama_host = self.config.get('ollama_host', 'http://localhost:11434')
+        # Check for new ollama_config format first, then fallback to old ollama_host
+        ollama_host = self.config.get('ollama_config', {}).get('host') or self.config.get('ollama_host', 'http://localhost:11434')
         
         # Configure Ollama client to use the specified host
         self.ollama_client = ollama.Client(host=ollama_host)
