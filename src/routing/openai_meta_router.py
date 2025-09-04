@@ -225,18 +225,48 @@ Analyze the query and respond with JSON only:"""
         if self.client and self.api_key:
             try:
                 import asyncio
+                import threading
                 
-                # Handle event loop properly
+                # Handle event loop properly for different contexts
                 try:
+                    # Check if we're in an async context
                     loop = asyncio.get_running_loop()
-                    # We're in an async context, can't use run_until_complete
-                    logger.warning("⚠️ Cannot run async OpenAI call in sync context, using fallback")
-                    if self.fallback_router:
-                        return self.fallback_router.route_query(query)
+                    
+                    # We're in an async context (like FastAPI), run in thread
+                    logger.info("🔄 Running OpenAI call in thread to avoid async context issues")
+                    
+                    result_container = {"result": None, "error": None}
+                    
+                    def run_openai_in_thread():
+                        """Run OpenAI call in a separate thread with its own event loop"""
+                        try:
+                            # Create new event loop for this thread
+                            new_loop = asyncio.new_event_loop()
+                            asyncio.set_event_loop(new_loop)
+                            try:
+                                result = new_loop.run_until_complete(self._route_with_openai(query))
+                                result_container["result"] = result
+                            finally:
+                                new_loop.close()
+                        except Exception as e:
+                            result_container["error"] = e
+                    
+                    # Run in thread and wait for completion
+                    thread = threading.Thread(target=run_openai_in_thread)
+                    thread.start()
+                    thread.join(timeout=30)  # 30 second timeout
+                    
+                    if result_container["result"]:
+                        logger.info("🤖 Successfully got OpenAI routing decision via thread")
+                        return result_container["result"]
+                    elif result_container["error"]:
+                        logger.warning(f"⚠️ OpenAI routing failed in thread: {result_container['error']}")
                     else:
-                        return self._basic_fallback_routing(query)
+                        logger.warning("⚠️ OpenAI routing timed out")
+                        
                 except RuntimeError:
-                    # No event loop running, safe to create one
+                    # No event loop running, safe to create one directly
+                    logger.info("🔄 No event loop found, creating one for OpenAI call")
                     loop = asyncio.new_event_loop()
                     asyncio.set_event_loop(loop)
                     try:
