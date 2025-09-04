@@ -1,54 +1,39 @@
-# AI Society - Dynamic LLM Routing System
+# AI Society - LLM Model Router
 
 [![Python 3.8+](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Ollama](https://img.shields.io/badge/Ollama-Compatible-green.svg)](https://ollama.com/)
 
-## 🌟 Overview
+## Overview
 
-AI Society is an innovative dynamic LLM routing system that democratizes access to powerful AI by intelligently routing queries to specialized local models. Instead of using resource-intensive monolithic models, this hybrid approach uses lightweight orchestration to select the optimal model for each task, dramatically reducing power consumption while maintaining high performance.
+AI Society is a model routing system that helps select appropriate local LLMs for different types of queries. It provides a web interface and can optionally use OpenAI's API to help with model selection decisions.
 
-### 🎯 Key Benefits
+### What it does
 
-- **🔋 Power Efficient**: 40-50% less power consumption compared to large monolithic models
-- **💰 Cost Effective**: Local inference after initial routing decision
-- **🚀 Performance Optimized**: RTX 3090 optimized with 7B-13B parameter models
-- **🔄 Dynamic Discovery**: Automatically discovers latest models from Ollama library
-- **🎨 Specialized Excellence**: Different models excel at different tasks
-- **🌐 Web Interface**: Beautiful, responsive chat interface
+- **Model Selection**: Analyzes queries and routes them to suitable local models
+- **OpenAI Integration**: Can use GPT models for intelligent routing decisions (optional)
+- **Web Interface**: Simple chat interface for testing different models
+- **Model Discovery**: Scans available Ollama models and manages downloads
+- **Performance Tracking**: Basic monitoring of response times and model usage
 
-## 🏗️ Architecture
+### What it doesn't do
+
+- This isn't a revolutionary architecture - it's a practical tool for managing multiple local models
+- It doesn't magically make models faster or better - just helps pick the right one
+- Power savings depend on your usage patterns and hardware setup
+- Performance varies based on the models you have available
+
+## Architecture
 
 ```
-┌─────────────────┐    ┌──────────────────┐    ┌─────────────────┐
-│   Web Client    │◄──►│  FastAPI Server  │◄──►│ Intelligent     │
-│   (Browser)     │    │  (Routing API)   │    │ Model Router    │
-└─────────────────┘    └──────────────────┘    └─────────────────┘
-                                                        │
-                       ┌──────────────────┐             │
-                       │ Model Discovery  │◄────────────┘
-                       │    Daemon        │
-                       └──────────────────┘
-                                │
-        ┌───────────────────────┼───────────────────────┐
-        │                       ▼                       │
-┌──────▼─────┐    ┌─────────────▼─────┐    ┌──────▼─────┐
-│   Coding   │    │    General /      │    │    Math    │
-│   Models   │    │  Conversation     │    │  Models    │
-│            │    │     Models        │    │            │
-│qwen2.5-    │    │   llama3.2:3b     │    │ phi3:mini  │
-│coder:7b    │    │   gemma2:9b       │    │            │
-│codellama   │    │   mistral:7b      │    │            │
-└────────────┘    └───────────────────┘    └────────────┘
+Web Interface ←→ FastAPI Server ←→ Model Router
+                                       ↓
+                                Model Discovery
+                                       ↓
+                              Local Ollama Models
 ```
 
-## 🚀 Quick Start
-
-### Prerequisites
-
-- **Python 3.8+**
-- **Ollama** installed and running
-- **NVIDIA RTX 3090** (or compatible GPU with 10GB+ VRAM)
+The system can optionally use OpenAI's API to help make routing decisions, but falls back to local heuristics if that's not available or desired.
 - **Linux/macOS/WSL** (recommended)
 
 ### Installation
@@ -60,6 +45,25 @@ cd ai-society
 ```
 
 2. **Run the setup script:**
+```bash
+chmod +x setup.sh
+## Quick Start
+
+### Prerequisites
+
+- **Python 3.8+**
+- **Ollama** installed and running
+- **GPU with sufficient VRAM** (tested on RTX 3090, but should work on other hardware)
+
+### Installation
+
+1. **Clone the repository:**
+```bash
+git clone https://github.com/dexmac221/AiSociety.git
+cd AiSociety
+```
+
+2. **Run setup:**
 ```bash
 chmod +x setup.sh
 ./setup.sh
@@ -74,146 +78,129 @@ chmod +x start.sh
 4. **Open your browser:**
    - Web Interface: http://localhost:8000
    - API Documentation: http://localhost:8000/docs
-   - Health Check: http://localhost:8000/api/health
 
-## 📁 Project Structure
+## Project Structure
 
 ```
 ai-society/
 ├── src/
-│   ├── daemon/
-│   │   └── model_discovery.py      # Ollama library scanner & daemon
-│   └── routing/
-│       └── intelligent_router.py   # Smart model selection logic
+│   ├── daemon/                     # Model discovery
+│   └── routing/                    # Routing logic
 ├── web/
-│   └── app.py                      # FastAPI web application
+│   └── app.py                      # Web interface
 ├── config/
-│   └── router_config.json          # Configuration settings
-├── data/                           # Model cache & performance data
-├── requirements.txt                # Python dependencies
-├── setup.sh                       # Automated setup script
-├── start.sh                       # Quick start script
-└── README.md                      # This file
+│   └── router_config.json          # Configuration
+├── requirements.txt                # Dependencies
+├── setup.sh                       # Setup script
+└── start.sh                       # Start script
 ```
 
-## 🎛️ Configuration
+## Configuration
 
-The system is highly configurable via `config/router_config.json`:
+Basic configuration in `config/router_config.json`. Key settings:
 
 ```json
 {
   "max_model_size": "8GB",
-  "preferred_quantization": "Q4_K_M",
+  "openai_meta_routing": {
+    "enabled": false,
+    "model": "gpt-4o-mini"
+  },
   "specialization_weights": {
     "coding": 1.5,
     "math": 1.3,
-    "reasoning": 1.4,
-    "conversation": 1.1
-  },
-  "gpu_constraints": {
-    "max_vram_gb": 24,
-    "preferred_model_sizes": ["3b", "7b", "8b", "9b", "13b"],
-    "avoid_sizes": ["70b", "72b", "90b", "405b"]
-  },
-  "auto_download": true,
-  "refresh_interval_hours": 24
+    "reasoning": 1.4
+  }
 }
 ```
 
-## 🤖 Supported Models
+## OpenAI Integration (Optional)
 
-The system automatically discovers and manages models from Ollama's library:
+If you want to use OpenAI's API to help with routing decisions:
 
-### Essential Models (Auto-downloaded)
-- **llama3.2:3b** - Fast general purpose
-- **qwen2.5-coder:7b** - Advanced coding
-- **phi3:mini** - Math and reasoning
+1. **Set your API key:**
+```bash
+export OPENAI_API_KEY="your-api-key-here"
+```
 
-### Recommended Models
-- **mistral:7b** - Strong reasoning
-- **gemma2:9b** - Creative tasks
-- **qwen2.5:7b** - Multilingual support
+2. **Enable in config:**
+```json
+{
+  "openai_meta_routing": {
+    "enabled": true,
+    "model": "gpt-4o-mini"
+  }
+}
+```
 
-### Specialized Models
-- **codellama:7b** - Code generation
-- **neural-chat:7b** - Conversation
-- **command-r:35b** - RAG and tools (if GPU allows)
+This will use OpenAI's API to analyze queries and recommend which local model to use. It's optional - the system works fine without it using local heuristics.
 
-## 🔄 How It Works
+## Supported Models
 
-1. **Query Analysis**: Incoming queries are analyzed for task type (coding, math, reasoning, etc.)
-2. **Model Selection**: The router scores available models based on:
-   - Specialization match
-   - Performance history
-   - Local availability
-   - Resource constraints
-3. **Dynamic Download**: If the best model isn't local, it's downloaded automatically
-4. **Intelligent Caching**: Performance data guides future selections
-5. **Response Generation**: Query is routed to the selected model for optimal results
+The system works with any Ollama models. Some examples:
 
-## 🔌 API Endpoints
+- **llama3.2:3b** - Fast, general purpose
+- **qwen2.5-coder:7b** - Good for coding tasks  
+- **phi3:mini** - Decent at math
+- **mistral:7b** - General reasoning
+- **gemma2:9b** - Larger general model
+
+## How It Works
+
+1. **Query comes in** via the web interface
+2. **Router analyzes** the query type (coding, math, general, etc.)
+3. **Selects a model** based on available models and simple heuristics
+4. **Downloads if needed** (if the selected model isn't local)
+5. **Runs inference** on the selected model
+6. **Returns response** with info about which model was used
+
+Pretty straightforward - nothing fancy, just a practical tool for managing multiple models.
+
+## API Endpoints
 
 ### WebSocket
 - `ws://localhost:8000/ws` - Real-time chat interface
 
 ### REST API
 - `GET /api/health` - System health check
-- `GET /api/stats` - System statistics
+- `GET /api/stats` - System statistics  
 - `GET /api/models` - Available models
-- `GET /api/recommendations` - Recommended models to download
-- `POST /api/refresh` - Force refresh model registry
+- `POST /api/refresh` - Refresh model registry
 
-## 🎨 Web Interface Features
+## Web Interface
 
-- **Real-time Chat**: WebSocket-based responsive chat
-- **Model Transparency**: Shows which model handled each query
-- **Performance Metrics**: Response times and model statistics
-- **Mobile Responsive**: Works great on all devices
-- **Dark/Light Themes**: Automatic theme adaptation
+- Real-time chat via WebSocket
+- Shows which model handled each query
+- Basic performance metrics
+- Mobile-friendly design
 
-## 📊 Performance Benefits
+## Development
 
-Compared to running large monolithic models:
-
-| Metric | Monolithic (70B) | AI Society (Hybrid) | Savings |
-|--------|-------------------|-------------------|---------|
-| Power Consumption | ~350W continuous | ~180W average | ~49% |
-| GPU Memory | 40GB+ | 4-8GB per model | 80%+ |
-| Response Time | Slower due to size | Optimized per task | 30-60% |
-| Specialization | Good at everything | Excellent at specific tasks | Quality++ |
-
-## 🛠️ Development
-
-### Running Tests
+To run tests:
 ```bash
-source venv/bin/activate
-python -m pytest tests/
+python test_system.py
 ```
 
-### Adding New Models
-Models are automatically discovered, but you can prioritize specific models in the configuration.
-
-### Custom Specializations
-Add new specialization categories in `intelligent_router.py`:
-
-```python
-def _analyze_query(self, query: str) -> List[str]:
-    # Add your custom logic here
-    if 'your_keyword' in query.lower():
-        specs.append('your_specialization')
+To test OpenAI integration:
+```bash
+python test_direct_openai.py
 ```
 
-## 🤝 Contributing
+## Contributing
 
 1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
+2. Create a feature branch
+3. Make your changes
+4. Test them
 5. Open a Pull Request
 
-## 📝 License
+## License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+MIT License - see the [LICENSE](LICENSE) file for details.
+
+## Notes
+
+This is a simple tool for managing multiple local LLMs. It's not groundbreaking technology, just a practical solution for organizing and routing between different models based on query type. Use it if it's helpful for your workflow.
 
 ## 🙏 Acknowledgments
 

@@ -1,19 +1,21 @@
-# AI Society - Dynamic LLM Routing System
+# AI Society - LLM Model Router
 
 ## 🎯 Project Overview
-A Python-based dynamic LLM routing system that democratizes AI access by intelligently routing queries to specialized local models. Uses 40-50% less power than monolithic models while maintaining excellent performance.
+A Python-based model routing system that helps select appropriate local LLMs for different types of queries. Provides a web interface and can optionally use OpenAI's API for routing decisions.
 
-## 📁 Complete Project Structure
+## 📁 Project Structure
 ```
 ai-society/
 ├── src/
 │   ├── __init__.py
 │   ├── daemon/
 │   │   ├── __init__.py
-│   │   └── model_discovery.py          # Ollama library scanner & daemon
+│   │   └── model_discovery.py          # Ollama library scanner
 │   └── routing/
 │       ├── __init__.py
-│       └── intelligent_router.py       # Smart model selection logic
+│       ├── intelligent_router.py       # Model selection logic
+│       ├── enhanced_intelligent_router.py # OpenAI-enhanced routing
+│       └── openai_meta_router.py       # OpenAI API integration
 ├── web/
 │   └── app.py                         # FastAPI web application
 ├── config/
@@ -27,8 +29,9 @@ ai-society/
 ├── setup.sh                          # Automated setup script (executable)
 ├── start.sh                          # Quick start script (executable)  
 ├── test_system.py                     # System testing script (executable)
+├── test_direct_openai.py              # OpenAI integration test
 ├── main.py                           # Alternative entry point
-└── README.md                         # Complete documentation
+└── README.md                         # Documentation
 ```
 
 ## 🚀 Quick Start Commands
@@ -47,20 +50,20 @@ python web/app.py
 ```
 
 ## 🔧 Technical Architecture
-- **Model Discovery Daemon**: Automatically scans Ollama library for latest models
-- **Intelligent Router**: Analyzes queries and selects optimal specialized models  
-- **Dynamic Downloads**: Automatically downloads best models on-demand
-- **Power Optimization**: Targets 7B-13B models optimized for RTX 3090
-- **Performance Tracking**: Monitors model performance for better future selections
+- **Model Discovery**: Scans Ollama library for available models
+- **Routing Logic**: Analyzes queries and selects appropriate models  
+- **Optional OpenAI Integration**: Uses GPT models for routing decisions
+- **Web Interface**: FastAPI + WebSocket for real-time chat
+- **Performance Tracking**: Basic monitoring of model usage
 
 ## 🎨 Web Interface Features
 - Real-time WebSocket chat at http://localhost:8000
-- Model transparency showing which model handled each query
-- Performance metrics and response times
+- Shows which model handled each query
+- Basic performance metrics and response times
 - Mobile responsive design
 - API documentation at http://localhost:8000/docs
 
-## 🤖 Supported Model Types
+## 🤖 Model Types
 - **Coding**: qwen2.5-coder:7b, codellama:7b
 - **Math**: phi3:mini, qwen2.5:7b  
 - **General**: llama3.2:3b, gemma2:9b
