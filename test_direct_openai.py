@@ -1,6 +1,20 @@
 #!/usr/bin/env python3
 """
-Simple test to verify OpenAI API calls are working directly.
+OpenAI Integration Test
+
+Direct test script for validating OpenAI API connectivity and functionality
+within the AI Society routing system. Tests API calls, query optimization,
+and model recommendation capabilities.
+
+Features:
+- Direct OpenAI API connectivity testing
+- Query optimization validation  
+- Model recommendation testing
+- Error handling verification
+- Cost optimization testing
+
+Author: AI Society Contributors
+License: MIT
 """
 
 import os

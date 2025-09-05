@@ -4,6 +4,13 @@
 A Python-based model routing system that helps select appropriate local LLMs for different types of queries. Features advanced multilingual support, conversation memory, and OpenAI-enhanced routing for intelligent model selection.
 
 ## 📁 Project Structure
+````instructions
+# AI Society - LLM Model Router
+
+## 🎯 Project Overview
+A Python-based model routing system that helps select appropriate local LLMs for different types of queries. Features advanced multilingual support, conversation memory, and OpenAI-enhanced routing for intelligent model selection.
+
+## 📁 Project Structure
 ```
 ai-society/
 ├── src/
@@ -36,6 +43,9 @@ ai-society/
 ├── start.sh                          # Quick start script (executable)  
 ├── test_system.py                     # System testing script (executable)
 ├── test_multilingual.py              # Multilingual testing script
+├── test_direct_openai.py              # OpenAI integration test
+├── test_conversation_memory.py        # Conversation memory test
+├── test_query_optimization.py         # Query optimization test
 └── README.md                         # Documentation
 ```
 ├── test_direct_openai.py              # OpenAI integration test

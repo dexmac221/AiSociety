@@ -1,6 +1,19 @@
 #!/usr/bin/env python3
 """
-Test script to debug OpenAI configuration loading
+OpenAI Configuration Test
+
+Debug script for testing and validating OpenAI API configuration loading,
+environment variable handling, and configuration file parsing.
+
+Features:
+- Configuration file validation
+- Environment variable testing
+- API key format verification
+- Configuration parsing debugging
+- Settings validation
+
+Author: AI Society Contributors
+License: MIT
 """
 
 import json

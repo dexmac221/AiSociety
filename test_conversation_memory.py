@@ -1,6 +1,19 @@
 #!/usr/bin/env python3
 """
-Test script to verify the Conversation Memory feature
+Conversation Memory System Test
+
+Test script for validating the conversation memory capabilities of AI Society.
+Tests multi-turn conversations, context awareness, and memory persistence.
+
+Features:
+- Multi-turn conversation testing  
+- Context awareness validation
+- Memory persistence verification
+- FAISS vector search testing
+- Session management validation
+
+Author: AI Society Contributors
+License: MIT
 """
 
 import sys

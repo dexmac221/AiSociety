@@ -1,6 +1,19 @@
 #!/usr/bin/env python3
 """
-Debug script to test the exact routing behavior that the user is experiencing
+Routing Debug Tool
+
+Debug script for testing and troubleshooting the routing behavior of AI Society.
+Helps diagnose model selection, query optimization, and routing logic issues.
+
+Features:
+- Web interface query testing
+- Model selection debugging
+- Routing logic validation
+- Performance troubleshooting
+- Configuration verification
+
+Author: AI Society Contributors
+License: MIT
 """
 
 import sys

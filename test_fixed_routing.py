@@ -1,6 +1,20 @@
 #!/usr/bin/env python3
 """
-Quick test to verify the OpenAI meta-routing is working correctly
+Fixed Routing Validation Test
+
+Quick test script for verifying that OpenAI meta-routing functionality
+is working correctly with the web interface. Tests routing decisions
+and model selection accuracy.
+
+Features:
+- Web interface routing testing
+- Demo query validation
+- Model selection verification
+- Routing accuracy measurement
+- Performance testing
+
+Author: AI Society Contributors
+License: MIT
 """
 
 import requests

@@ -1,6 +1,21 @@
 #!/usr/bin/env python3
 """
-Quick test script to verify the system components work
+AI Society System Test Suite
+
+Comprehensive test script for validating all core system components and
+functionality. Tests imports, configuration, model discovery, routing,
+and basic system integration.
+
+Features:
+- Module import testing
+- Configuration validation
+- Model discovery verification
+- Routing system testing
+- Database connectivity testing
+- Basic integration validation
+
+Author: AI Society Contributors
+License: MIT
 """
 
 import sys

@@ -1,6 +1,20 @@
 #!/usr/bin/env python3
 """
-Test script to verify OpenAI integration is working properly.
+OpenAI Integration Validation Test
+
+Comprehensive test script for validating OpenAI integration functionality
+within the AI Society routing system. Tests API connectivity, authentication,
+and routing integration.
+
+Features:
+- OpenAI API authentication testing
+- Integration with routing system validation
+- Error handling verification
+- Configuration testing
+- Performance measurement
+
+Author: AI Society Contributors
+License: MIT
 """
 
 import os

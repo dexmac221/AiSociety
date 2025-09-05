@@ -1,6 +1,20 @@
 #!/usr/bin/env python3
 """
-Test script to verify the new Query Optimization feature
+Query Optimization System Test
+
+Test script for validating the query optimization capabilities of AI Society.
+Tests OpenAI-powered query enhancement, optimization transparency, and
+improved response quality through intelligent prompt engineering.
+
+Features:
+- Query enhancement testing
+- Optimization transparency validation
+- Performance improvement measurement
+- Cost-effectiveness testing
+- Fallback behavior verification
+
+Author: AI Society Contributors
+License: MIT
 """
 
 import sys
