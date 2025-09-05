@@ -32,11 +32,11 @@ This guide will help you set up a development environment for contributing to AI
 
 ```bash
 # Fork the repository on GitHub, then clone your fork
-git clone https://github.com/yourusername/ai-society.git
-cd ai-society
+git clone https://github.com/YOUR_USERNAME/AiSociety.git
+cd AiSociety
 
 # Add upstream remote
-git remote add upstream https://github.com/original-owner/ai-society.git
+git remote add upstream https://github.com/dexmac221/AiSociety.git
 ```
 
 ### 2. Environment Setup

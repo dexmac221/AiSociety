@@ -9,8 +9,8 @@ Author: AI Society Contributors
 License: MIT
 """
 
-from .intelligent_router import IntelligentRouter
+from .intelligent_router import IntelligentModelRouter
 from .enhanced_intelligent_router import EnhancedIntelligentRouter
 from .openai_meta_router import OpenAIMetaRouter
 
-__all__ = ['IntelligentRouter', 'EnhancedIntelligentRouter', 'OpenAIMetaRouter']
+__all__ = ['IntelligentModelRouter', 'EnhancedIntelligentRouter', 'OpenAIMetaRouter']

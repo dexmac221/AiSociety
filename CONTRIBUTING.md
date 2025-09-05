@@ -30,8 +30,8 @@ Thank you for your interest in contributing to AI Society! This guide will help 
 1. **Fork the repository**
 2. **Clone your fork**:
    ```bash
-   git clone https://github.com/yourusername/ai-society.git
-   cd ai-society
+   git clone https://github.com/YOUR_USERNAME/AiSociety.git
+   cd AiSociety
    ```
 
 3. **Set up development environment**:

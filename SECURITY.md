@@ -38,12 +38,12 @@ Security vulnerabilities should not be reported through public GitHub issues.
 
 ### 2. Send a private report
 
-Email us at: **security@ai-society.dev** (replace with actual email)
-
-Or use GitHub's private vulnerability reporting feature:
+Use GitHub's private vulnerability reporting feature:
 1. Go to the repository's Security tab
 2. Click "Report a vulnerability"
 3. Fill out the vulnerability report form
+
+Or create a private issue with the security label for sensitive reports.
 
 ### 3. Include the following information:
 
@@ -222,12 +222,12 @@ If you suspect a security incident:
 
 ## 📞 Contact Information
 
-- **Security Email**: security@ai-society.dev (replace with actual)
-- **Security Team**: @security-team (replace with actual GitHub handles)
+- **Security Reports**: Use GitHub's private vulnerability reporting feature
+- **Security Team**: @dexmac221 (project maintainer)
 - **Response Time**: Within 24 hours for critical issues
 
 ## 📝 Security Policy Updates
 
 This security policy is reviewed and updated regularly. Last updated: September 4, 2025
 
-For the latest version, always check: https://github.com/yourusername/ai-society/blob/main/SECURITY.md
+For the latest version, always check: https://github.com/dexmac221/AiSociety/blob/main/SECURITY.md

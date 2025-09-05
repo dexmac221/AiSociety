@@ -166,4 +166,4 @@ This project is open source and welcomes contributions from the community. See C
 
 ---
 
-*For the latest updates and development progress, visit the [GitHub repository](https://github.com/yourusername/ai-society).*
+*For the latest updates and development progress, visit the [GitHub repository](https://github.com/dexmac221/AiSociety).*
