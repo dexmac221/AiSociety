@@ -3,18 +3,61 @@
 [![Python 3.8+](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Ollama](https://img.shields.io/badge/Ollama-Compatible-green.svg)](https://ollama.com/)
+[![OpenAI](https://img.shields.io/badge/OpenAI-Enhanced-orange.svg)](https://openai.com/)
+
+## 🎉 Recent Major Updates
+
+### **🧠 Conversation Memory (Latest)**
+- **Multi-turn conversations** with full context awareness
+- **Smart references** - "explain that code", "improve my function"  
+- **Session management** with automatic cleanup
+- **Context visualization** in the web interface
+
+### **🔧 Query Optimization with Dual AI**
+- **OpenAI-powered enhancement** of user queries for better results
+- **Transparent process** showing original vs optimized queries
+- **Dramatic improvements** - "sort list" → "Write a well-documented Python function..."
+- **Model-specific optimization** tailored to selected AI capabilities
+
+### **🎯 Enhanced Model Routing**
+- **AI-powered model selection** using GPT-4o-mini analysis
+- **Specialized routing** for coding, math, creative, and reasoning tasks
+- **Performance tracking** with success rates and optimization impact
+- **Fallback intelligence** when preferred models unavailable
 
 ## Overview
 
-AI Society is a model routing system that helps select appropriate local LLMs for different types of queries. It provides a web interface and can optionally use OpenAI's API to help with model selection decisions.
+AI Society is an advanced model routing system that intelligently selects and optimizes queries for local LLMs. It features dual AI intelligence combining OpenAI's superior query analysis with efficient local model execution, plus conversation memory for extended interactions.
 
 ### What it does
 
-- **Model Selection**: Analyzes queries and routes them to suitable local models
-- **OpenAI Integration**: Can use GPT models for intelligent routing decisions (optional)
-- **Web Interface**: Simple chat interface for testing different models
-- **Model Discovery**: Scans available Ollama models and manages downloads
-- **Performance Tracking**: Basic monitoring of response times and model usage
+- **🧠 Dual AI Intelligence**: OpenAI for smart routing + Local models for execution
+- **🔧 Query Optimization**: Automatically enhances queries for better results
+- **💬 Conversation Memory**: Maintains context across multi-turn conversations
+- **🎯 Smart Model Selection**: Analyzes queries and routes to optimal local models
+- **🌐 Modern Web Interface**: Real-time chat with optimization and memory indicators
+- **📊 Model Discovery**: Scans available Ollama models and manages downloads
+- **⚡ Performance Tracking**: Comprehensive monitoring of response times and model usage
+
+### Key Features
+
+#### **Query Optimization with Dual AI**
+- **Before**: "sort list" → Basic response
+- **After**: OpenAI enhances to "Write a well-documented Python function with error handling that sorts a list..." → Superior response
+- **Transparency**: See both original and optimized queries in the interface
+- **Intelligence**: OpenAI analyzes intent and optimizes for the selected model's strengths
+
+#### **Conversation Memory & Context**
+- **Multi-turn Conversations**: "Write a function" → "Explain that code" → "Make it more complex"
+- **Context Awareness**: Remembers previous messages and maintains conversation flow
+- **Smart References**: Understands "that code", "the previous example", "my function"
+- **Session Management**: 10-message memory window with automatic cleanup
+
+#### **Enhanced Model Routing**
+- **Specialized Selection**: Coding → qwen2.5-coder, Math → phi3, Creative → llama3.2
+- **Performance Optimization**: Tracks model success rates and response times
+- **Auto-downloads**: Fetches recommended models as needed
+- **Fallback Logic**: Graceful degradation when preferred models unavailable
 
 ### What it doesn't do
 
@@ -26,14 +69,37 @@ AI Society is a model routing system that helps select appropriate local LLMs fo
 ## Architecture
 
 ```
-Web Interface ←→ FastAPI Server ←→ Model Router
-                                       ↓
-                                Model Discovery
-                                       ↓
-                              Local Ollama Models
+    User Query → Web Interface → FastAPI Server
+                                      ↓
+                               🧠 Conversation Memory
+                                      ↓
+    ┌─────────────────── Enhanced Router ──────────────────┐
+    │                                                       │
+    │  🤖 OpenAI Meta-Router     ←→    🎯 Local Router     │
+    │  • Query Analysis                • Model Selection   │
+    │  • Query Optimization            • Performance       │
+    │  • Model Recommendation          • Fallback Logic    │
+    │                                                       │
+    └────────────── Model Discovery ────────────────────────┘
+                           ↓
+                  📥 Local Ollama Models
+                  • qwen2.5-coder (Coding)
+                  • phi3 (Math)
+                  • llama3.2 (General)
+                  • mistral (Reasoning)
 ```
 
-The system can optionally use OpenAI's API to help make routing decisions, but falls back to local heuristics if that's not available or desired.
+### Dual AI Intelligence Flow
+
+1. **Query Reception**: User sends message via WebSocket
+2. **Memory Integration**: System adds to conversation history and builds context
+3. **OpenAI Analysis**: GPT-4o-mini analyzes query and optimizes it for better results
+4. **Model Selection**: AI recommends optimal local model based on query type and available models
+5. **Local Execution**: Enhanced query runs on selected local model
+6. **Response Enhancement**: Results include optimization details and memory context
+7. **Memory Update**: Conversation history updated for future context
+
+This hybrid approach combines the intelligence of commercial AI with the privacy and efficiency of local models.
 - **Linux/macOS/WSL** (recommended)
 
 ### Installation
@@ -76,8 +142,45 @@ chmod +x start.sh
 ```
 
 4. **Open your browser:**
-   - Web Interface: http://localhost:8000
-   - API Documentation: http://localhost:8000/docs
+   - **Web Interface**: http://localhost:8000
+   - **API Documentation**: http://localhost:8000/docs
+   - **Health Check**: http://localhost:8000/api/health
+
+## 🚀 New Features Showcase
+
+### **Query Optimization in Action**
+
+```
+👤 User Input: "sort list"
+
+🔧 OpenAI Enhancement: "Write a well-documented Python function with error handling 
+   that sorts a list of integers in ascending order using an efficient algorithm. 
+   Include type hints, docstring, and example usage."
+
+🤖 Selected Model: qwen2.5-coder (specialized for coding)
+⚡ Result: High-quality, comprehensive code with documentation
+```
+
+### **Conversation Memory in Action**
+
+```
+👤 "Write a Python function to calculate fibonacci"
+🤖 [Provides fibonacci function] 🧠 2 messages
+
+👤 "Can you explain how that algorithm works?"  
+🤖 [Explains the fibonacci algorithm from previous message] 🧠 4 messages
+
+👤 "Make it more efficient using memoization"
+🤖 [Improves the previous function with memoization] 🧠 6 messages
+```
+
+### **Web Interface Features**
+
+- **🧠 Memory Indicators**: Shows conversation length and context usage
+- **🔧 Query Optimization**: Displays original vs enhanced queries
+- **🎯 Model Selection**: Shows reasoning for model choice
+- **⚡ Performance Metrics**: Real-time response times and confidence scores
+- **📊 Status Updates**: Live updates with optimization and memory info
 
 ## Project Structure
 
@@ -97,26 +200,44 @@ ai-society/
 
 ## Configuration
 
-Basic configuration in `config/router_config.json`. Key settings:
+Enhanced configuration in `config/router_config.json` with new AI features:
 
 ```json
 {
   "max_model_size": "8GB",
   "openai_meta_routing": {
-    "enabled": false,
-    "model": "gpt-4o-mini"
+    "enabled": true,
+    "model": "gpt-4o-mini",
+    "cache_decisions": true,
+    "cost_optimization": {
+      "max_requests_per_hour": 200,
+      "max_daily_cost_usd": 5.0,
+      "fallback_on_rate_limit": true
+    },
+    "prompt_optimization": {
+      "include_model_specs": true,
+      "include_previous_success": true,
+      "format_structured_response": true
+    }
   },
   "specialization_weights": {
     "coding": 1.5,
     "math": 1.3,
-    "reasoning": 1.4
+    "reasoning": 1.4,
+    "creative": 1.2,
+    "conversation": 1.1
+  },
+  "performance_tracking": {
+    "enabled": true,
+    "track_optimization_impact": true,
+    "conversation_analytics": true
   }
 }
 ```
 
-## OpenAI Integration (Optional)
+## OpenAI Integration (Recommended)
 
-If you want to use OpenAI's API to help with routing decisions:
+For optimal performance with query optimization and intelligent routing:
 
 1. **Set your API key:**
 ```bash
@@ -133,7 +254,21 @@ export OPENAI_API_KEY="your-api-key-here"
 }
 ```
 
-This will use OpenAI's API to analyze queries and recommend which local model to use. It's optional - the system works fine without it using local heuristics.
+### **What OpenAI Integration Provides:**
+
+- **🔧 Query Optimization**: Transforms vague queries into specific, effective prompts
+- **🎯 Smart Model Selection**: AI-powered analysis of query requirements
+- **📈 Better Results**: Dramatically improved response quality through enhanced prompts
+- **💰 Cost Efficient**: Uses gpt-4o-mini for analysis (~$0.01 per 1000 requests)
+- **🔄 Fallback Safe**: System works without OpenAI, but with reduced optimization
+
+### **Example Optimizations:**
+
+| Original Query | OpenAI Enhancement |
+|---|---|
+| "sort list" | "Write a well-documented Python function with error handling..." |
+| "quantum" | "Explain quantum computing in simple terms with examples..." |
+| "5+3*2" | "Calculate step-by-step showing order of operations..." |
 
 ## Supported Models
 
@@ -147,14 +282,45 @@ The system works with any Ollama models. Some examples:
 
 ## How It Works
 
-1. **Query comes in** via the web interface
-2. **Router analyzes** the query type (coding, math, general, etc.)
-3. **Selects a model** based on available models and simple heuristics
-4. **Downloads if needed** (if the selected model isn't local)
-5. **Runs inference** on the selected model
-6. **Returns response** with info about which model was used
+### **Enhanced Workflow with Dual AI Intelligence**
 
-Pretty straightforward - nothing fancy, just a practical tool for managing multiple models.
+1. **Query Reception** 📥
+   - User sends message via web interface
+   - WebSocket connection maintains session state
+
+2. **Conversation Memory** 🧠  
+   - System adds message to conversation history
+   - Builds context from recent messages (last 6 messages)
+   - Creates context-aware query for better understanding
+
+3. **OpenAI Analysis** 🤖
+   - GPT-4o-mini analyzes query intent and complexity
+   - Optimizes query for maximum effectiveness
+   - Recommends optimal local model based on specializations
+
+4. **Model Selection & Download** 🎯
+   - System selects recommended model
+   - Auto-downloads if not available locally
+   - Falls back to available models if needed
+
+5. **Enhanced Execution** ⚡
+   - Runs optimized query on selected local model
+   - Tracks performance and response quality
+   - Includes conversation context for better responses
+
+6. **Rich Response** 📊
+   - Returns response with optimization details
+   - Shows original vs enhanced query
+   - Includes memory and routing metadata
+   - Updates conversation history for future context
+
+### **Intelligence Layers**
+
+- **Memory Layer**: Context from conversation history
+- **Optimization Layer**: OpenAI query enhancement  
+- **Routing Layer**: Smart model selection
+- **Execution Layer**: Efficient local inference
+- **Tracking Layer**: Performance and analytics
 
 ## API Endpoints
 
@@ -169,21 +335,61 @@ Pretty straightforward - nothing fancy, just a practical tool for managing multi
 
 ## Web Interface
 
-- Real-time chat via WebSocket
-- Shows which model handled each query
-- Basic performance metrics
-- Mobile-friendly design
+### **Enhanced Chat Experience**
+
+- **💬 Real-time chat** via WebSocket with conversation memory
+- **🧠 Memory indicators** showing conversation length and context usage  
+- **🔧 Query optimization** display with before/after comparisons
+- **🎯 Model selection** reasoning and confidence scores
+- **📊 Performance metrics** with response times and optimization impact
+- **📱 Mobile-friendly** responsive design
+- **🎨 Visual enhancements** with memory and optimization status indicators
+
+### **Interface Features**
+
+- **Memory Status**: "🧠 5 messages - Context applied"
+- **Optimization Info**: Shows original vs enhanced queries
+- **Model Details**: Reasoning for model selection and alternatives
+- **Performance**: Real-time response times and confidence
+- **Session Info**: Connection status with memory enabled indicator
 
 ## Development
 
-To run tests:
+### **Testing the Enhanced Features**
+
+Run comprehensive tests:
 ```bash
+# Test basic system functionality
 python test_system.py
+
+# Test OpenAI integration and routing
+python test_direct_openai.py
+
+# Test query optimization feature
+python test_query_optimization.py
+
+# Test conversation memory
+python test_conversation_memory.py
 ```
 
-To test OpenAI integration:
+### **Feature-Specific Testing**
+
+**Query Optimization Testing:**
 ```bash
-python test_direct_openai.py
+# Test with simple queries that should be enhanced
+python -c "
+from src.routing.openai_meta_router import OpenAIMetaRouter
+router = OpenAIMetaRouter()
+result = router.route_query_sync('sort list')
+print(f'Original: sort list')
+print(f'Enhanced: {result[\"optimized_query\"]}')
+"
+```
+
+**Memory Testing:**
+```bash
+# Test conversation memory functionality
+python test_conversation_memory.py
 ```
 
 ## Contributing
@@ -200,7 +406,17 @@ MIT License - see the [LICENSE](LICENSE) file for details.
 
 ## Notes
 
-This is a simple tool for managing multiple local LLMs. It's not groundbreaking technology, just a practical solution for organizing and routing between different models based on query type. Use it if it's helpful for your workflow.
+This system represents a practical implementation of **dual AI intelligence** - combining the superior query understanding and optimization capabilities of large commercial models (OpenAI) with the privacy, control, and efficiency of local open-source models.
+
+### **Key Innovations:**
+
+- **🧠 Conversation Memory**: First-class support for multi-turn conversations with intelligent context management
+- **🔧 Query Optimization**: Automatic enhancement of user queries for dramatically better results  
+- **🎯 Dual AI Architecture**: Commercial AI for intelligence + Local AI for execution
+- **💡 Transparent Process**: Users see exactly how their queries are improved and which models are selected
+- **⚡ Practical Performance**: Real-world benefits for coding, learning, and complex conversations
+
+This isn't just another model router - it's a comprehensive platform for making local AI more intelligent and conversational through smart augmentation with commercial AI services.
 
 ## 🙏 Acknowledgments
 
@@ -211,12 +427,23 @@ This is a simple tool for managing multiple local LLMs. It's not groundbreaking 
 
 ## 🔮 Future Roadmap
 
+### **Immediate Enhancements**
+- [ ] **Advanced Memory**: Persistent conversation storage across sessions
+- [ ] **Query Templates**: Pre-defined optimization patterns for common use cases  
+- [ ] **Model Benchmarking**: Automated testing and performance comparison
+- [ ] **Custom Optimizations**: User-defined query enhancement rules
+
+### **Next Phase**
 - [ ] **Multi-GPU Support** - Distribute models across multiple GPUs
-- [ ] **Fine-tuning Integration** - Custom model training pipeline
-- [ ] **Advanced Analytics** - Detailed performance dashboards
-- [ ] **Plugin System** - Extensible model integrations
-- [ ] **Voice Interface** - Speech-to-text integration
-- [ ] **Mobile App** - Native mobile applications
+- [ ] **Fine-tuning Integration** - Custom model training pipeline with memory context
+- [ ] **Advanced Analytics** - Detailed performance dashboards and optimization insights
+- [ ] **Plugin System** - Extensible model integrations and custom routers
+
+### **Long-term Vision**
+- [ ] **Voice Interface** - Speech-to-text integration with conversation continuity
+- [ ] **Mobile App** - Native mobile applications with full feature parity
+- [ ] **Team Collaboration** - Shared conversations and model libraries
+- [ ] **Enterprise Features** - SSO, audit logs, usage analytics
 
 ## 📞 Support
 
