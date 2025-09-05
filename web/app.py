@@ -950,6 +950,14 @@ async def get_chat_interface():
                         </div>
                     </div>
                     <div class="tech-card">
+                        <h4>🌍 Language</h4>
+                        <div id="language-stats">
+                            <span>Query language: <span id="query-language">Auto-detect</span></span>
+                            <span>Translation: <span id="translation-status">N/A</span></span>
+                            <span>Enhancement: <span id="multilingual-enhancement">Disabled</span></span>
+                        </div>
+                    </div>
+                    <div class="tech-card">
                         <h4>🖥️ System</h4>
                         <div id="system-stats">
                             <span>Available models: <span id="total-models">0</span></span>
@@ -1235,6 +1243,16 @@ async def get_chat_interface():
                     confidence: data.confidence || data.routing_confidence
                 };
                 
+                // Store multilingual information if available
+                if (data.translation || data.multilingual_enhanced) {
+                    window.lastLanguageInfo = data.translation || {
+                        detected_language: 'English',
+                        translated: data.multilingual_enhanced || false
+                    };
+                } else {
+                    window.lastLanguageInfo = null;
+                }
+                
                 // Update tech panel if visible
                 const techPanel = document.getElementById('tech-panel');
                 if (techPanel && !techPanel.classList.contains('hidden')) {
@@ -1489,6 +1507,18 @@ async def get_chat_interface():
                     document.getElementById('response-time').textContent = window.lastPerformance.response_time + 'ms';
                     document.getElementById('routing-method').textContent = window.lastPerformance.routing_method || 'Standard';
                     document.getElementById('routing-confidence').textContent = window.lastPerformance.confidence ? Math.round(window.lastPerformance.confidence * 100) + '%' : 'N/A';
+                }
+                
+                // Update multilingual stats if available
+                if (window.lastLanguageInfo) {
+                    const langInfo = window.lastLanguageInfo;
+                    document.getElementById('query-language').textContent = langInfo.detected_language || 'Auto-detect';
+                    document.getElementById('translation-status').textContent = langInfo.translated ? 'Applied' : 'Not needed';
+                    document.getElementById('multilingual-enhancement').textContent = langInfo.translated ? 'Enabled' : 'Disabled';
+                } else {
+                    document.getElementById('query-language').textContent = 'Auto-detect';
+                    document.getElementById('translation-status').textContent = 'N/A';
+                    document.getElementById('multilingual-enhancement').textContent = 'Disabled';
                 }
                 
                 // Update system stats

@@ -1,10 +1,10 @@
 {
   "_metadata": {
     "last_updated": "2025-09-05",
-    "update_notes": "Updated with latest models from letest_models.json including DeepSeek-V3.1/R1, Qwen2.5/3, Phi-4, Gemma-3, Hermes-4, and others",
+    "update_notes": "Updated with latest models from letest_models.json including Qwen2.5/3, Phi-4, Gemma-3, Hermes-4, and others",
     "new_categories": ["multimodal_specialists", "efficiency_specialists"],
-    "featured_models": ["deepseek-r1:685b", "qwen3-coder:30b", "phi-4:14b", "qwen2.5-omni:7b", "hermes-4:14b"],
-    "total_models": 16
+    "featured_models": ["qwen2.5-coder:7b", "phi-4:14b", "qwen2.5-omni:7b", "hermes-4:14b"],
+    "total_models": 14
   },
   
   "model_selection_strategies": {
@@ -44,21 +44,12 @@
     "coding_specialists": {
       "primary": [
         {
-          "name": "qwen3-coder:30b",
-          "specializations": ["python", "javascript", "debugging", "code_review", "multilingual"],
-          "performance_score": 98,
-          "size": "17GB",
-          "context": 131072,
-          "priority": 1,
-          "notes": "Latest Qwen3 Coder with A3B architecture"
-        },
-        {
           "name": "qwen2.5-coder:7b",
           "specializations": ["python", "javascript", "debugging", "code_review"],
           "performance_score": 92,
           "size": "4.7GB",
           "context": 32768,
-          "priority": 2
+          "priority": 1
         },
         {
           "name": "deepseek-coder-v2:16b",
@@ -66,7 +57,7 @@
           "performance_score": 95,
           "size": "9.0GB",
           "context": 32768,
-          "priority": 3
+          "priority": 2
         },
         {
           "name": "codellama:7b",
@@ -74,7 +65,7 @@
           "performance_score": 88,
           "size": "3.8GB",
           "context": 16384,
-          "priority": 4
+          "priority": 3
         }
       ]
     },
@@ -82,21 +73,12 @@
     "math_specialists": {
       "primary": [
         {
-          "name": "deepseek-r1:685b",
-          "specializations": ["advanced_reasoning", "chain_of_thought", "complex_math", "proofs"],
-          "performance_score": 99,
-          "size": "370GB",
-          "context": 128000,
-          "priority": 1,
-          "notes": "DeepSeek R1 - State-of-the-art reasoning model"
-        },
-        {
           "name": "phi-4:14b",
           "specializations": ["math", "reasoning", "efficiency", "calculations"],
           "performance_score": 94,
           "size": "8GB",
           "context": 16000,
-          "priority": 2,
+          "priority": 1,
           "notes": "Microsoft Phi-4 - Excellent math performance"
         },
         {
@@ -105,7 +87,7 @@
           "performance_score": 90,
           "size": "4.4GB",
           "context": 131072,
-          "priority": 3
+          "priority": 2
         },
         {
           "name": "phi3:mini",
@@ -113,7 +95,7 @@
           "performance_score": 85,
           "size": "2.3GB",
           "context": 8192,
-          "priority": 4
+          "priority": 3
         }
       ]
     },

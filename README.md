@@ -1,13 +1,37 @@
 # AI Society - LLM Model Router
 
-[![Python 3.8+](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
+[![Pyth## 🎯 Model Inventory (2025 Latest)
+
+Our system features **14 cutting-edge models** from 2025's breakthrough releases:
+
+### 💻 **Coding Specialists**
+- **Qwen2.5-Coder:7B** - Advanced multilingual coding with debugging
+- **DeepSeek-Coder-v2:16B** - Complex algorithms and system programming
+- **CodeLlama:7B** - General coding, documentation, refactoring
+
+### 🧮 **Math & Reasoning**  
+- **Phi-4:14B** - Microsoft's latest math reasoning model
+- **Qwen2.5:7B** - Algebra, calculus, statistics, problem solving
+- **Phi3:mini** - Quick calculations and basic math
+
+### 🎨 **Creative Specialists**
+- **Hermes-4:14B** - NousResearch's latest uncensored creative model
+- **Yi:9B** - Long-form content, poetry, fiction
+- **Neural-Chat:7B** - Dialogue, conversation, roleplayhttps://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Ollama](https://img.shields.io/badge/Ollama-Compatible-green.svg)](https://ollama.com/)
 [![OpenAI](https://img.shields.io/badge/OpenAI-Enhanced-orange.svg)](https://openai.com/)
 
 ## 🎉 Recent Major Updates
 
-### **🚀 Latest 2025 Models & Enhanced UI (Latest)**
+### **🌍 Multilingual AI Enhancement (Latest - September 2025)**
+- **Intelligent Language Detection** - Automatically detects queries in Spanish, French, German, Italian, Portuguese, Japanese, Chinese, and more
+- **OpenAI Translation Layer** - Translates non-English queries to English for optimal local model performance
+- **Response Language Instructions** - Local models receive instructions to respond in the user's original language
+- **Enhanced Performance** - Local models work better with English queries but respond in user's preferred language
+- **Real-time Language Panel** - Technical dashboard shows detection status, translation applied, and multilingual enhancement active
+
+### **🚀 Latest 2025 Models & Enhanced UI**
 - **16 cutting-edge models** added from 2025's breakthrough releases
 - **DeepSeek-V3.1/R1** (685B) - Revolutionary reasoning capabilities
 - **Qwen2.5/3-Coder** (30B) - Advanced programming assistance
@@ -16,7 +40,7 @@
 - **OpenAI OSS 20B** - RTX 3090 optimized open source model
 - **Dark mode UI fixes** - Perfect text visibility in all themes
 - **Enhanced example queries** - 8 diverse categories including debugging, translation, and data analysis
-- **Real-time technical panel** - Memory stats, model info, performance metrics
+- **Real-time technical panel** - Memory stats, model info, performance metrics, and language detection
 - **Improved model selection balloons** - Clear visibility in both light/dark modes
 
 ### **🧠 Conversation Memory**
@@ -32,26 +56,34 @@
 - **Model-specific optimization** tailored to selected AI capabilities
 
 ### **🎯 Enhanced Model Routing**
-- **AI-powered model selection** using GPT-4o-mini analysis
+- **AI-powered model selection** using GPT-4.1-mini analysis
 - **Specialized routing** for coding, math, creative, and reasoning tasks
 - **Performance tracking** with success rates and optimization impact
 - **Fallback intelligence** when preferred models unavailable
 
 ## Overview
 
-AI Society is an advanced model routing system that intelligently selects and optimizes queries for local LLMs. It features dual AI intelligence combining OpenAI's superior query analysis with efficient local model execution, plus conversation memory for extended interactions.
+AI Society is an advanced model routing system that intelligently selects and optimizes queries for local LLMs. It features dual AI intelligence combining OpenAI's superior query analysis with efficient local model execution, plus conversation memory for extended interactions, and now includes **multilingual support** for global accessibility.
 
 ### What it does
 
+- **🌍 Multilingual Intelligence**: Automatic language detection and translation for optimal local model performance
 - **🧠 Dual AI Intelligence**: OpenAI for smart routing + Local models for execution
 - **🔧 Query Optimization**: Automatically enhances queries for better results
 - **💬 Conversation Memory**: Maintains context across multi-turn conversations
 - **🎯 Smart Model Selection**: Analyzes queries and routes to optimal local models
-- **🌐 Modern Web Interface**: Real-time chat with optimization and memory indicators
+- **🌐 Modern Web Interface**: Real-time chat with optimization, memory, and language indicators
 - **📊 Model Discovery**: Scans available Ollama models and manages downloads
 - **⚡ Performance Tracking**: Comprehensive monitoring of response times and model usage
 
 ### Key Features
+
+#### **🌍 Multilingual AI Enhancement**
+- **Universal Language Support**: Ask questions in Spanish, French, German, Italian, Portuguese, Japanese, Chinese, and more
+- **Intelligent Translation**: OpenAI automatically detects language and translates to English for optimal local model comprehension
+- **Native Response Language**: Local models receive instructions to respond in your original language
+- **Performance Boost**: Combines English query optimization with multilingual response capability
+- **Real-time Indicators**: Language panel shows detection status and translation activity
 
 #### **Query Optimization with Dual AI**
 - **Before**: "sort list" → Basic response
@@ -86,15 +118,18 @@ The system employs a sophisticated dual AI architecture combining commercial AI 
 
 ### Dual AI Intelligence Flow
 
-1. **Query Reception**: User sends message via WebSocket
-2. **Memory Integration**: System adds to conversation history and builds context
-3. **OpenAI Analysis**: GPT-4o-mini analyzes query and optimizes it for better results
-4. **Model Selection**: AI recommends optimal local model based on query type and available models
-5. **Local Execution**: Enhanced query runs on selected local model
-6. **Response Enhancement**: Results include optimization details and memory context
-7. **Memory Update**: Conversation history updated for future context
+1. **Query Reception**: User sends message in any supported language via WebSocket
+2. **Language Detection**: OpenAI automatically detects the query language
+3. **Translation Layer**: Non-English queries translated to English for optimal local model performance
+4. **Memory Integration**: System adds to conversation history and builds context
+5. **OpenAI Analysis**: GPT-4.1-mini analyzes query and optimizes it for better results
+6. **Model Selection**: AI recommends optimal local model based on query type and available models
+7. **Response Instructions**: Local model receives query with instruction to respond in original language
+8. **Local Execution**: Enhanced query runs on selected local model with language instructions
+9. **Response Enhancement**: Results include optimization details, memory context, and language info
+10. **Memory Update**: Conversation history updated for future context
 
-This hybrid approach combines the intelligence of commercial AI with the privacy and efficiency of local models.
+This hybrid approach combines the intelligence of commercial AI with the privacy and efficiency of local models, while supporting global users through intelligent multilingual processing.
 - **Linux/macOS/WSL** (recommended)
 
 ### Installation
@@ -177,11 +212,31 @@ chmod +x start.sh
 
 ### **Web Interface Features**
 
+- **🌍 Language Panel**: Real-time language detection and translation status
 - **🧠 Memory Indicators**: Shows conversation length and context usage
 - **🔧 Query Optimization**: Displays original vs enhanced queries
 - **🎯 Model Selection**: Shows reasoning for model choice
 - **⚡ Performance Metrics**: Real-time response times and confidence scores
-- **📊 Status Updates**: Live updates with optimization and memory info
+- **📊 Status Updates**: Live updates with optimization, memory, and language info
+
+## ✅ Current Status (September 2025)
+
+🎯 **System is LIVE and fully operational!**
+- ✅ Web interface running at: http://localhost:8000 
+- ✅ 14 latest 2025 models integrated and tested
+- ✅ Enhanced UI with dark mode, 8+ example categories
+- ✅ Multilingual support with OpenAI translation framework
+- ✅ Hybrid memory system with conversation context
+- ✅ Real-time technical dashboard with performance metrics
+- ✅ Professional visual documentation with schema diagrams
+
+**Latest Models Available:**
+- **Coding**: Qwen2.5-Coder:7B, DeepSeek-Coder-v2:16B, CodeLlama:7B
+- **Math**: Phi-4:14B, Qwen2.5:7B, Phi3:mini
+- **Creative**: Hermes-4:14B, Yi:9B, Neural-Chat:7B  
+- **Multimodal**: Qwen2.5-Omni:7B, Gemma-3:27B/4B
+- **Efficiency**: Gemma-3:1B, Apple-FastVLM:7B, NVIDIA-Nemotron-Nano:12B
+- **General**: Qwen2.5:7B, Llama3.1:8B, Mistral:7B, OpenAI-OSS:20B
 
 ## Project Structure
 
@@ -208,7 +263,7 @@ Enhanced configuration in `config/router_config.json` with new AI features:
   "max_model_size": "8GB",
   "openai_meta_routing": {
     "enabled": true,
-    "model": "gpt-4o-mini",
+    "model": "gpt-4.1-mini",
     "cache_decisions": true,
     "cost_optimization": {
       "max_requests_per_hour": 200,
@@ -425,6 +480,47 @@ print(f'Enhanced: {result[\"optimized_query\"]}')
 # Test conversation memory functionality
 python test_conversation_memory.py
 ```
+
+**Multilingual Testing:**
+```bash
+# Test language detection and translation
+python test_multilingual.py
+
+# Test specific languages
+curl -X POST http://localhost:8000/api/chat \
+  -H "Content-Type: application/json" \
+  -d '{"message": "¿Cómo puedo crear una función en Python?"}'
+```
+
+## 🌟 Testing Recommendations
+
+### **🌍 Multilingual Testing**
+Try these sample queries to test language detection and translation:
+- **Spanish**: "¿Cómo puedo crear una función en Python que calcule fibonacci?"
+- **French**: "Comment puis-je optimiser les performances de mon code JavaScript?"
+- **German**: "Wie kann ich eine REST API mit FastAPI erstellen?"
+- **Italian**: "Come posso risolvere questo problema di matematica?"
+- **Japanese**: "Pythonでデータ分析をするための最良の方法は何ですか？"
+- **Chinese**: "如何用Python创建一个简单的web应用程序？"
+
+### **🧠 Conversation Memory Testing**
+Test the conversation flow:
+1. "Write a Python function to sort a list"
+2. "Can you explain how that function works?"
+3. "Make it more efficient"
+4. "Add error handling to the previous version"
+
+### **🔧 Query Optimization Testing**
+Compare results with simple vs. enhanced queries:
+- Simple: "sort list" → Enhanced: "Write a well-documented Python function..."
+- Simple: "math problem" → Enhanced: "Solve this mathematical problem step-by-step..."
+
+### **📊 Technical Dashboard Testing**
+Monitor the real-time panels:
+- **Language Panel**: Watch language detection and translation status
+- **Memory Panel**: See conversation context building
+- **Performance Panel**: Track response times and routing confidence
+- **Model Panel**: Observe model selection reasoning
 
 ## Contributing
 

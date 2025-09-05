@@ -68,6 +68,14 @@ class OpenAIMetaRouter:
             fallback_router: Local router for fallback scenarios
         """
         self.api_key = api_key or os.getenv('OPENAI_API_KEY')
+        
+        # Skip placeholder API keys
+        if self.api_key and (
+            self.api_key.startswith('your_') or 
+            self.api_key == 'your_openai_api_key_here'
+        ):
+            self.api_key = None
+            
         self.model = model
         self.cache_decisions = cache_decisions
         self.fallback_router = fallback_router
@@ -76,12 +84,98 @@ class OpenAIMetaRouter:
         
         # Initialize OpenAI client
         if openai_available and self.api_key:
+            # Create client without any organization parameters to avoid conflicts
             self.client = AsyncOpenAI(api_key=self.api_key)
             logger.info(f"🤖 OpenAI Meta-Router initialized with {model}")
         else:
             self.client = None
             logger.warning("⚠️ OpenAI not available, will use fallback routing only")
     
+    async def detect_and_translate_query(self, query: str) -> Dict[str, Any]:
+        """
+        Detect the language of the query and translate to English if needed.
+        
+        This enhances model performance since most local models are optimized for English.
+        The system will instruct the final model to respond in the original language.
+        
+        Args:
+            query (str): User's input query in any language
+            
+        Returns:
+            Dict[str, Any]: Contains detected language, English translation, and instructions
+        """
+        if not self.client:
+            return {
+                "original_language": "unknown",
+                "detected_language_name": "Unknown",
+                "english_query": query,
+                "translation_applied": False,
+                "response_instruction": "",
+                "translation_confidence": 0.0
+            }
+        
+        translation_prompt = f"""You are a language detection and translation expert. Analyze this query:
+
+"{query}"
+
+Your tasks:
+1. Detect the language of this query
+2. If it's not English, translate it to clear, natural English
+3. Provide instructions for responding in the original language
+
+Respond with JSON only:
+{{
+    "original_language": "language-code (e.g., 'es', 'fr', 'de', 'zh', 'ja', 'en')",
+    "detected_language_name": "Full language name (e.g., 'Spanish', 'French', 'German')",
+    "english_query": "Natural English translation (or original if already English)",
+    "translation_applied": true/false,
+    "response_instruction": "Instruction for final response language (e.g., 'Respond in Spanish', or '' if English)",
+    "translation_confidence": 0.95
+}}
+
+Rules:
+- If the query is already in English, keep it unchanged and set translation_applied to false
+- For non-English queries, provide natural, clear English translation
+- Preserve the original meaning and intent exactly
+- Create appropriate response instructions for the target language
+- Be confident in language detection (aim for 0.9+ confidence)"""
+
+        try:
+            response = await self.client.chat.completions.create(
+                model=self.model,
+                messages=[{"role": "user", "content": translation_prompt}],
+                temperature=0.3,
+                max_tokens=300
+            )
+            
+            content = response.choices[0].message.content.strip()
+            
+            # Parse JSON response
+            if content.startswith('```json'):
+                content = content.replace('```json', '').replace('```', '').strip()
+                
+            translation_result = json.loads(content)
+            
+            logger.info(f"🌍 Language detection: {translation_result.get('detected_language_name', 'Unknown')} "
+                       f"({translation_result.get('original_language', 'unknown')})")
+            
+            if translation_result.get('translation_applied', False):
+                logger.info(f"🔄 Translation: '{query}' → '{translation_result.get('english_query', query)}'")
+            
+            return translation_result
+            
+        except Exception as e:
+            logger.error(f"❌ Translation error: {e}")
+            # Fallback to original query
+            return {
+                "original_language": "unknown",
+                "detected_language_name": "Unknown", 
+                "english_query": query,
+                "translation_applied": False,
+                "response_instruction": "",
+                "translation_confidence": 0.0
+            }
+
     def update_model_inventory(self, models: Dict[str, Dict]) -> None:
         """
         Update the current inventory of available local models.
@@ -92,7 +186,7 @@ class OpenAIMetaRouter:
         self.local_models = models
         logger.info(f"📊 Updated model inventory: {len(models)} models available")
     
-    def generate_routing_prompt(self, query: str) -> str:
+    def generate_routing_prompt(self, query: str, language_instruction: str = None) -> str:
         """
         Generate a dynamic prompt for OpenAI model selection and query optimization.
         
@@ -102,6 +196,7 @@ class OpenAIMetaRouter:
         
         Args:
             query (str): User's input query
+            language_instruction (str, optional): Instruction for response language
             
         Returns:
             str: Complete prompt for OpenAI model
@@ -125,6 +220,11 @@ class OpenAIMetaRouter:
         
         models_text = "\n\n".join(model_descriptions)
         
+        # Add language instruction if translation was detected
+        language_instruction_text = ""
+        if language_instruction:
+            language_instruction_text = f"\n\n## IMPORTANT - Response Language Instruction:\n{language_instruction}\n"
+        
         prompt = f"""You are an expert AI model router AND query optimizer for a local LLM system. Your job is to:
 1. Analyze user queries and recommend the BEST local model
 2. Optimize the query to get maximum performance from the selected model
@@ -133,7 +233,7 @@ class OpenAIMetaRouter:
 {models_text}
 
 ## Original User Query:
-"{query}"
+"{query}"{language_instruction_text}
 
 ## Your Dual Task:
 1. **Model Selection**: Choose the optimal model for this query
@@ -306,18 +406,28 @@ Analyze the query, select the best model, optimize the query, and respond with J
     
     async def _route_with_openai(self, query: str) -> Dict[str, Any]:
         """
-        Perform routing using OpenAI API.
+        Perform routing using OpenAI API with multilingual support.
         
         Args:
             query (str): User query
             
         Returns:
-            Dict[str, Any]: OpenAI routing recommendation
+            Dict[str, Any]: OpenAI routing recommendation with translation details
         """
         
-        prompt = self.generate_routing_prompt(query)
+        # Check if translation is needed
+        translation_result = await self.detect_and_translate_query(query)
+        
+        # Use translated query for routing if translation was applied
+        routing_query = translation_result.get('translated_query', query)
+        language_instruction = translation_result.get('language_instruction')
+        
+        # Generate prompt with language instruction if needed
+        prompt = self.generate_routing_prompt(routing_query, language_instruction)
         
         logger.info(f"🤖 Sending routing request to {self.model}")
+        if translation_result.get('translated'):
+            logger.info(f"🌍 Using translated query for better model performance")
         
         try:
             response = await self.client.chat.completions.create(
@@ -339,8 +449,8 @@ Analyze the query, select the best model, optimize the query, and respond with J
             
             routing_decision = json.loads(response.choices[0].message.content)
             
-            # Validate the decision
-            validated_decision = self._validate_routing_decision(routing_decision, query)
+            # Validate the decision and include translation information
+            validated_decision = self._validate_routing_decision(routing_decision, query, translation_result)
             
             # Cache the decision
             if self.cache_decisions:
@@ -359,13 +469,14 @@ Analyze the query, select the best model, optimize the query, and respond with J
             logger.error(f"❌ OpenAI API error: {e}")
             raise
     
-    def _validate_routing_decision(self, decision: Dict, query: str) -> Dict[str, Any]:
+    def _validate_routing_decision(self, decision: Dict, query: str, translation_result: Dict = None) -> Dict[str, Any]:
         """
         Validate and enhance the routing decision from OpenAI.
         
         Args:
             decision (Dict): Raw decision from OpenAI
             query (str): Original user query
+            translation_result (Dict, optional): Translation details if applied
             
         Returns:
             Dict[str, Any]: Validated and enhanced decision
@@ -404,7 +515,10 @@ Analyze the query, select the best model, optimize the query, and respond with J
             'optimized_query': optimized_query,
             'optimization_applied': decision.get('optimization_applied', 'none'),
             'optimization_reasoning': decision.get('optimization_reasoning', 'No optimization applied'),
-            'query_enhanced': optimized_query != query
+            'query_enhanced': optimized_query != query,
+            # Translation information
+            'translation': translation_result if translation_result else None,
+            'multilingual_enhanced': bool(translation_result and translation_result.get('translated'))
         }
         
         # Log optimization info
@@ -412,6 +526,11 @@ Analyze the query, select the best model, optimize the query, and respond with J
             logger.info(f"🔧 Query optimized: {decision.get('optimization_applied', 'moderate')} enhancement applied")
             logger.info(f"📝 Original: {query[:100]}...")
             logger.info(f"✨ Optimized: {optimized_query[:100]}...")
+            
+        # Log translation info
+        if translation_result and translation_result.get('translated'):
+            logger.info(f"🌍 Multilingual support: Query translated from {translation_result.get('detected_language', 'unknown')}")
+            logger.info(f"📋 Response instruction: {translation_result.get('language_instruction', 'N/A')}")
         
         return validated
     
