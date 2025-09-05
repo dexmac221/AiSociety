@@ -80,26 +80,9 @@ AI Society is an advanced model routing system that intelligently selects and op
 
 ## Architecture
 
-```
-    User Query → Web Interface → FastAPI Server
-                                      ↓
-                               🧠 Conversation Memory
-                                      ↓
-    ┌─────────────────── Enhanced Router ──────────────────┐
-    │                                                       │
-    │  🤖 OpenAI Meta-Router     ←→    🎯 Local Router     │
-    │  • Query Analysis                • Model Selection   │
-    │  • Query Optimization            • Performance       │
-    │  • Model Recommendation          • Fallback Logic    │
-    │                                                       │
-    └────────────── Model Discovery ────────────────────────┘
-                           ↓
-                  📥 Local Ollama Models
-                  • qwen2.5-coder (Coding)
-                  • phi3 (Math)
-                  • llama3.2 (General)
-                  • mistral (Reasoning)
-```
+![AI Society Architecture](schema_color.png)
+
+The system employs a sophisticated dual AI architecture combining commercial AI intelligence with local model execution:
 
 ### Dual AI Intelligence Flow
 
@@ -157,6 +140,12 @@ chmod +x start.sh
    - **Web Interface**: http://localhost:8000
    - **API Documentation**: http://localhost:8000/docs
    - **Health Check**: http://localhost:8000/api/health
+
+## 🎨 Web Interface Showcase
+
+![AI Society Web Interface](web_interface.png)
+
+*Experience the enhanced 2025 interface featuring dark mode optimization, real-time technical panels, conversation memory indicators, and 8 diverse example query categories.*
 
 ## 🚀 New Features Showcase
 
@@ -370,6 +359,8 @@ All models are automatically discovered and can be downloaded on-demand through 
 - `POST /api/refresh` - Refresh model registry
 
 ## Web Interface
+
+![AI Society Web Interface](web_interface.png)
 
 ### **Enhanced Chat Experience**
 
