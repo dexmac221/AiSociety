@@ -4,7 +4,9 @@ from fastapi.staticfiles import StaticFiles
 import uvicorn
 import asyncio
 import json
+import time
 from datetime import datetime
+from typing import Dict, List, Optional
 import threading
 import sys
 import os
@@ -47,18 +49,95 @@ except Exception as e:
     print(f"❌ Failed to initialize enhanced router: {e}")
     router = None
 
-# Connection manager for WebSocket
+# Conversation memory for each session
+class ConversationMemory:
+    def __init__(self, max_messages: int = 10):
+        self.max_messages = max_messages
+        self.messages: List[Dict] = []
+        self.session_id = None
+        self.created_at = datetime.now()
+        
+    def add_message(self, role: str, content: str, model: str = None, metadata: Dict = None):
+        """Add a message to conversation history"""
+        message = {
+            'role': role,  # 'user' or 'assistant'
+            'content': content,
+            'timestamp': datetime.now().isoformat(),
+            'model': model,
+            'metadata': metadata or {}
+        }
+        self.messages.append(message)
+        
+        # Keep only the last max_messages
+        if len(self.messages) > self.max_messages:
+            self.messages = self.messages[-self.max_messages:]
+    
+    def get_context_for_query(self, current_query: str) -> str:
+        """Create context string for the current query including conversation history"""
+        if not self.messages:
+            return current_query
+        
+        # Build conversation context
+        context_parts = []
+        
+        # Add recent conversation history
+        for msg in self.messages[-6:]:  # Last 6 messages for context
+            role_prefix = "Human: " if msg['role'] == 'user' else "Assistant: "
+            context_parts.append(f"{role_prefix}{msg['content'][:200]}")  # Truncate long messages
+        
+        # Add current query
+        context_parts.append(f"Human: {current_query}")
+        
+        return "\n".join(context_parts)
+    
+    def get_conversation_summary(self) -> str:
+        """Get a brief summary of the conversation topics"""
+        if not self.messages:
+            return "No previous conversation"
+        
+        topics = []
+        for msg in self.messages:
+            if msg['role'] == 'user' and len(msg['content']) > 10:
+                # Extract key topics/subjects from user messages
+                content = msg['content'][:100]
+                if any(word in content.lower() for word in ['explain', 'what', 'how', 'why']):
+                    topics.append(content.split('?')[0].split('.')[0])
+        
+        return f"Recent topics: {', '.join(topics[-3:])}" if topics else "General conversation"
+
+# Connection manager for WebSocket with conversation memory
 class ConnectionManager:
     def __init__(self):
         self.active_connections: list[WebSocket] = []
+        self.conversations: Dict[str, ConversationMemory] = {}
 
     async def connect(self, websocket: WebSocket):
         await websocket.accept()
         self.active_connections.append(websocket)
+        
+        # Create a unique session ID for this connection
+        session_id = f"session_{len(self.conversations)}_{int(time.time())}"
+        self.conversations[session_id] = ConversationMemory()
+        self.conversations[session_id].session_id = session_id
+        
+        # Store session_id in websocket for later retrieval
+        websocket.session_id = session_id
+        
+        return session_id
 
     def disconnect(self, websocket: WebSocket):
         if websocket in self.active_connections:
             self.active_connections.remove(websocket)
+            
+        # Clean up old conversations (keep last 50 sessions)
+        if len(self.conversations) > 50:
+            oldest_sessions = sorted(self.conversations.keys())[:len(self.conversations) - 50]
+            for session_id in oldest_sessions:
+                del self.conversations[session_id]
+
+    def get_conversation(self, session_id: str) -> ConversationMemory:
+        """Get conversation memory for a session"""
+        return self.conversations.get(session_id)
 
     async def send_personal_message(self, message: str, websocket: WebSocket):
         await websocket.send_text(message)
@@ -381,6 +460,25 @@ async def get_chat_interface():
                 border-radius: 8px;
                 border: 1px solid #ffcc02;
                 opacity: 0.9;
+            }
+            
+            .memory-info {
+                display: flex;
+                align-items: center;
+                gap: 6px;
+                font-size: 11px;
+                margin-top: 6px;
+                padding: 3px 8px;
+                background: linear-gradient(135deg, #e3f2fd 0%, #f3e5f5 100%);
+                color: #1565c0;
+                border-radius: 8px;
+                border: 1px solid #42a5f5;
+                opacity: 0.9;
+            }
+            
+            .memory-enabled {
+                font-weight: 600;
+                color: #0d47a1;
             }
             
             .query-enhanced {
@@ -795,12 +893,23 @@ async def get_chat_interface():
             }
             
             function handleResponse(data) {
+                // Handle connection status
+                if (data.status === 'connected') {
+                    statusText.textContent = `Connected with Memory Enabled`;
+                    return;
+                }
+                
                 // Handle status messages
                 if (data.status === 'processing') {
-                    // Update typing indicator with progress
+                    // Update typing indicator with progress and memory info
                     if (typingIndicator) {
+                        let memoryInfo = '';
+                        if (data.memory_messages) {
+                            memoryInfo = ` (${data.memory_messages} messages in memory)`;
+                        }
+                        
                         typingIndicator.querySelector('.typing-indicator').innerHTML = `
-                            <span>🔄 ${data.message}</span>
+                            <span>🔄 ${data.message}${memoryInfo}</span>
                             <div class="typing-dots">
                                 <div class="typing-dot"></div>
                                 <div class="typing-dot"></div>
@@ -860,6 +969,8 @@ async def get_chat_interface():
                 
                 // Add query optimization info and comparison if available
                 let queryComparisonHtml = '';
+                let memoryInfoHtml = '';
+                
                 if (data.query_enhanced) {
                     const optimizationType = data.optimization_applied || 'enhanced';
                     modelInfoHtml += `
@@ -883,9 +994,22 @@ async def get_chat_interface():
                     `;
                 }
                 
+                // Add memory information if available
+                if (data.memory_enabled && data.conversation_length > 1) {
+                    const contextUsed = data.context_used ? 'Context applied' : 'Direct query';
+                    memoryInfoHtml = `
+                        <div class="memory-info">
+                            <span>🧠</span>
+                            <span class="memory-enabled">${data.conversation_length} messages</span>
+                            <span style="opacity: 0.8;">${contextUsed}</span>
+                        </div>
+                    `;
+                }
+                
                 messageDiv.innerHTML = `
                     <div class="message-content">
                         ${modelInfoHtml}
+                        ${memoryInfoHtml}
                         ${queryComparisonHtml}
                         <div>${formatMessage(messageText)}</div>
                     </div>
@@ -894,7 +1018,7 @@ async def get_chat_interface():
                 messagesArea.appendChild(messageDiv);
                 scrollToBottom();
                 
-                // Update status with optimization info
+                // Update status with optimization and memory info
                 let statusText = `Last: ${data.model}`;
                 if (data.specializations_used) {
                     const specs = data.specializations_used.join(', ');
@@ -902,6 +1026,9 @@ async def get_chat_interface():
                 }
                 if (data.query_enhanced) {
                     statusText += ` - Query optimized`;
+                }
+                if (data.memory_enabled && data.conversation_length) {
+                    statusText += ` - Memory: ${data.conversation_length} msgs`;
                 }
                 statusText += ` - ${data.response_time_ms}ms`;
                 
@@ -1100,8 +1227,17 @@ async def get_chat_interface():
 
 @app.websocket("/ws")
 async def websocket_endpoint(websocket: WebSocket):
-    await manager.connect(websocket)
-    context = {'session_id': datetime.now().isoformat()}
+    session_id = await manager.connect(websocket)
+    conversation = manager.get_conversation(session_id)
+    
+    # Send welcome message with session info
+    await websocket.send_json({
+        'status': 'connected',
+        'message': f'Connected! Session: {session_id[:12]}... Memory enabled.',
+        'model': 'system',
+        'response_time_ms': 0,
+        'session_id': session_id
+    })
     
     try:
         while True:
@@ -1116,40 +1252,87 @@ async def websocket_endpoint(websocket: WebSocket):
                     'response_time_ms': 0
                 })
                 continue
-            
+
             try:
-                # Send processing status
+                # Add user message to conversation memory
+                conversation.add_message('user', query)
+                
+                # Create context-aware query using conversation history
+                context_query = conversation.get_context_for_query(query)
+                conversation_summary = conversation.get_conversation_summary()
+                
+                # Send processing status with memory info
                 await websocket.send_json({
                     'status': 'processing',
-                    'message': 'Analyzing query and selecting optimal model...',
+                    'message': f'Processing with memory... {conversation_summary}',
                     'model': 'system',
-                    'response_time_ms': 0
+                    'response_time_ms': 0,
+                    'memory_messages': len(conversation.messages),
+                    'context_length': len(context_query)
                 })
                 
-                # Process query with router
-                result = router.query_model(query, model_name=None, context=context)
+                # Enhanced context for router
+                enhanced_context = {
+                    'session_id': session_id,
+                    'conversation_history': conversation.messages[-3:],  # Last 3 messages
+                    'conversation_summary': conversation_summary,
+                    'message_count': len(conversation.messages),
+                    'previous_model': conversation.messages[-2].get('model') if len(conversation.messages) >= 2 else None
+                }
+                
+                # Process query with router using context-aware query
+                print(f"🧠 Using conversation context: {len(conversation.messages)} messages in memory")
+                print(f"📝 Context query: {context_query[:100]}...")
+                
+                result = router.query_model(context_query, model_name=None, context=enhanced_context)
                 print(f"📋 Result from router: {list(result.keys()) if isinstance(result, dict) else type(result)}")
                 
-                # Update context for next query
-                context['previous_model'] = result['model']
+                # Add assistant response to conversation memory
+                assistant_response = result.get('response', result.get('message', ''))
+                conversation.add_message(
+                    'assistant', 
+                    assistant_response, 
+                    model=result.get('model'),
+                    metadata={
+                        'routing_method': result.get('routing_method'),
+                        'confidence': result.get('confidence'),
+                        'query_enhanced': result.get('query_enhanced', False)
+                    }
+                )
+                
+                # Add memory information to result
+                result.update({
+                    'session_id': session_id,
+                    'memory_enabled': True,
+                    'conversation_length': len(conversation.messages),
+                    'context_used': len(context_query) > len(query),
+                    'conversation_summary': conversation_summary
+                })
                 
                 # Send response
-                print(f"📤 Sending WebSocket response...")
+                print(f"📤 Sending WebSocket response with memory context...")
                 await websocket.send_json(result)
                 print(f"✅ WebSocket response sent successfully")
                 
             except Exception as e:
+                print(f"❌ Error in WebSocket endpoint: {e}")
+                import traceback
+                traceback.print_exc()
+                
                 error_response = {
                     'error': str(e),
                     'message': f'Sorry, I encountered an error: {str(e)}. Please try again.',
                     'model': 'error-handler',
                     'response_time_ms': 0,
-                    'specializations_used': []
+                    'specializations_used': [],
+                    'session_id': session_id,
+                    'memory_enabled': True
                 }
                 await websocket.send_json(error_response)
                 
     except WebSocketDisconnect:
         manager.disconnect(websocket)
+        print(f"🔌 WebSocket disconnected for session: {session_id}")
     except Exception as e:
         print(f"WebSocket error: {e}")
         manager.disconnect(websocket)
