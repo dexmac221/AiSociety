@@ -4,6 +4,9 @@
 # Core LLM Integration
 ollama>=0.3.0,<0.4.0
 
+# OpenAI Integration (Optional but recommended)
+openai>=1.0.0,<2.0.0
+
 # Web Framework & Server
 fastapi>=0.104.1,<0.105.0
 uvicorn[standard]>=0.24.0,<0.25.0
@@ -14,8 +17,16 @@ beautifulsoup4>=4.12.2,<5.0.0
 requests>=2.31.0,<3.0.0
 lxml>=4.9.3,<5.0.0
 
-# Scientific Computing
+# Scientific Computing & Vector Operations
 numpy>=1.24.3,<2.0.0
+
+# Memory & Embeddings
+sentence-transformers>=2.2.2,<3.0.0
+faiss-cpu>=1.7.4,<2.0.0  # Use faiss-gpu if you have GPU support
+
+# Vector Store Options (Optional)
+# qdrant-client>=1.6.0,<2.0.0  # Uncomment for Qdrant support
+# psycopg2-binary>=2.9.0,<3.0.0  # Uncomment for PostgreSQL/pgvector
 
 # Configuration & Environment
 python-dotenv>=1.0.0,<2.0.0

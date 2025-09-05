@@ -18,6 +18,7 @@ try:
     import ollama
     from daemon.model_discovery import ModelDiscoveryDaemon
     from routing.enhanced_intelligent_router import EnhancedIntelligentRouter
+    from memory.hybrid_memory import HybridMemorySystem
     
     # Configure Ollama client for remote host
     import json
@@ -50,66 +51,17 @@ except Exception as e:
     router = None
 
 # Conversation memory for each session
-class ConversationMemory:
-    def __init__(self, max_messages: int = 10):
-        self.max_messages = max_messages
-        self.messages: List[Dict] = []
-        self.session_id = None
-        self.created_at = datetime.now()
-        
-    def add_message(self, role: str, content: str, model: str = None, metadata: Dict = None):
-        """Add a message to conversation history"""
-        message = {
-            'role': role,  # 'user' or 'assistant'
-            'content': content,
-            'timestamp': datetime.now().isoformat(),
-            'model': model,
-            'metadata': metadata or {}
-        }
-        self.messages.append(message)
-        
-        # Keep only the last max_messages
-        if len(self.messages) > self.max_messages:
-            self.messages = self.messages[-self.max_messages:]
-    
-    def get_context_for_query(self, current_query: str) -> str:
-        """Create context string for the current query including conversation history"""
-        if not self.messages:
-            return current_query
-        
-        # Build conversation context
-        context_parts = []
-        
-        # Add recent conversation history
-        for msg in self.messages[-6:]:  # Last 6 messages for context
-            role_prefix = "Human: " if msg['role'] == 'user' else "Assistant: "
-            context_parts.append(f"{role_prefix}{msg['content'][:200]}")  # Truncate long messages
-        
-        # Add current query
-        context_parts.append(f"Human: {current_query}")
-        
-        return "\n".join(context_parts)
-    
-    def get_conversation_summary(self) -> str:
-        """Get a brief summary of the conversation topics"""
-        if not self.messages:
-            return "No previous conversation"
-        
-        topics = []
-        for msg in self.messages:
-            if msg['role'] == 'user' and len(msg['content']) > 10:
-                # Extract key topics/subjects from user messages
-                content = msg['content'][:100]
-                if any(word in content.lower() for word in ['explain', 'what', 'how', 'why']):
-                    topics.append(content.split('?')[0].split('.')[0])
-        
-        return f"Recent topics: {', '.join(topics[-3:])}" if topics else "General conversation"
+# ConversationMemory has been replaced with HybridMemorySystem
 
 # Connection manager for WebSocket with conversation memory
 class ConnectionManager:
     def __init__(self):
         self.active_connections: list[WebSocket] = []
-        self.conversations: Dict[str, ConversationMemory] = {}
+        self.conversations: Dict[str, HybridMemorySystem] = {}
+        
+        # Create memory data directory if it doesn't exist
+        memory_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'data', 'memory')
+        os.makedirs(memory_dir, exist_ok=True)
 
     async def connect(self, websocket: WebSocket):
         await websocket.accept()
@@ -117,8 +69,13 @@ class ConnectionManager:
         
         # Create a unique session ID for this connection
         session_id = f"session_{len(self.conversations)}_{int(time.time())}"
-        self.conversations[session_id] = ConversationMemory()
-        self.conversations[session_id].session_id = session_id
+        
+        # Initialize hybrid memory system for this session
+        memory_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'data', 'memory')
+        self.conversations[session_id] = HybridMemorySystem(
+            session_id=session_id,
+            memory_dir=memory_dir
+        )
         
         # Store session_id in websocket for later retrieval
         websocket.session_id = session_id
@@ -135,7 +92,7 @@ class ConnectionManager:
             for session_id in oldest_sessions:
                 del self.conversations[session_id]
 
-    def get_conversation(self, session_id: str) -> ConversationMemory:
+    def get_conversation(self, session_id: str) -> HybridMemorySystem:
         """Get conversation memory for a session"""
         return self.conversations.get(session_id)
 
@@ -1255,16 +1212,16 @@ async def websocket_endpoint(websocket: WebSocket):
 
             try:
                 # Add user message to conversation memory
-                conversation.add_message('user', query)
+                await conversation.add_message('user', query)
                 
                 # Create context-aware query using conversation history
-                context_query = conversation.get_context_for_query(query)
+                context_query = await conversation.get_context_for_query(query)
                 conversation_summary = conversation.get_conversation_summary()
                 
                 # Send processing status with memory info
                 await websocket.send_json({
                     'status': 'processing',
-                    'message': f'Processing with memory... {conversation_summary}',
+                    'message': f'Processing with hybrid memory... {conversation_summary}',
                     'model': 'system',
                     'response_time_ms': 0,
                     'memory_messages': len(conversation.messages),
@@ -1281,7 +1238,7 @@ async def websocket_endpoint(websocket: WebSocket):
                 }
                 
                 # Process query with router using context-aware query
-                print(f"🧠 Using conversation context: {len(conversation.messages)} messages in memory")
+                print(f"🧠 Using hybrid memory: {len(conversation.messages)} messages in memory")
                 print(f"📝 Context query: {context_query[:100]}...")
                 
                 result = router.query_model(context_query, model_name=None, context=enhanced_context)
@@ -1289,7 +1246,7 @@ async def websocket_endpoint(websocket: WebSocket):
                 
                 # Add assistant response to conversation memory
                 assistant_response = result.get('response', result.get('message', ''))
-                conversation.add_message(
+                await conversation.add_message(
                     'assistant', 
                     assistant_response, 
                     model=result.get('model'),
