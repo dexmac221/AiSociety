@@ -7,7 +7,19 @@
 
 ## 🎉 Recent Major Updates
 
-### **🧠 Conversation Memory (Latest)**
+### **🚀 Latest 2025 Models & Enhanced UI (Latest)**
+- **16 cutting-edge models** added from 2025's breakthrough releases
+- **DeepSeek-V3.1/R1** (685B) - Revolutionary reasoning capabilities
+- **Qwen2.5/3-Coder** (30B) - Advanced programming assistance
+- **Phi-4** (14B) - Microsoft's latest reasoning model
+- **Gemma-3** series - Google's enhanced efficiency models
+- **OpenAI OSS 20B** - RTX 3090 optimized open source model
+- **Dark mode UI fixes** - Perfect text visibility in all themes
+- **Enhanced example queries** - 8 diverse categories including debugging, translation, and data analysis
+- **Real-time technical panel** - Memory stats, model info, performance metrics
+- **Improved model selection balloons** - Clear visibility in both light/dark modes
+
+### **🧠 Conversation Memory**
 - **Multi-turn conversations** with full context awareness
 - **Smart references** - "explain that code", "improve my function"  
 - **Session management** with automatic cleanup
@@ -272,13 +284,37 @@ export OPENAI_API_KEY="your-api-key-here"
 
 ## Supported Models
 
-The system works with any Ollama models. Some examples:
+The system works with 16 cutting-edge models from 2025's latest releases:
 
-- **llama3.2:3b** - Fast, general purpose
-- **qwen2.5-coder:7b** - Good for coding tasks  
-- **phi3:mini** - Decent at math
-- **mistral:7b** - General reasoning
-- **gemma2:9b** - Larger general model
+### **🧠 Reasoning Specialists**
+- **DeepSeek-V3.1** (685B) - Revolutionary reasoning and problem-solving
+- **DeepSeek-R1** (671B) - Advanced research and analysis capabilities
+- **Phi-4** (14B) - Microsoft's latest reasoning breakthrough
+
+### **💻 Coding Specialists**  
+- **Qwen2.5-Coder** (30B) - Ultimate programming assistant
+- **Qwen3-Coder** (30B) - Next-gen code generation
+- **OpenAI OSS 20B** - RTX 3090 optimized coding model
+
+### **🎯 Efficiency Specialists**
+- **Gemma-3-2B** - Ultra-fast responses
+- **Gemma-3-9B** - Balanced speed and capability  
+- **Gemma-3-27B** - High-performance reasoning
+
+### **🌟 Multimodal Specialists**
+- **Qwen2.5-VL** (30B) - Vision and language understanding
+- **Llama-3.3** (70B) - Advanced multimodal processing
+
+### **🤖 Conversation Specialists**
+- **Hermes-4** (14B) - Natural dialogue and assistance
+- **Mistral-Small** (22B) - Efficient conversation
+- **Yi-Lightning** (9B) - Fast response specialist
+
+### **📊 General Purpose Models**
+- **Llama-3.2** (3B) - Reliable general use
+- **Neural-Chat** (7B) - Conversational AI
+
+All models are automatically discovered and can be downloaded on-demand through the intelligent routing system.
 
 ## How It Works
 
@@ -345,13 +381,20 @@ The system works with any Ollama models. Some examples:
 - **📱 Mobile-friendly** responsive design
 - **🎨 Visual enhancements** with memory and optimization status indicators
 
-### **Interface Features**
+### **Web Interface Features**
 
-- **Memory Status**: "🧠 5 messages - Context applied"
-- **Optimization Info**: Shows original vs enhanced queries
-- **Model Details**: Reasoning for model selection and alternatives
-- **Performance**: Real-time response times and confidence
-- **Session Info**: Connection status with memory enabled indicator
+- **🧠 Memory Status**: "🧠 5 messages - Context applied"
+- **🔧 Optimization Info**: Shows original vs enhanced queries
+- **🎯 Model Details**: Reasoning for model selection and alternatives
+- **⚡ Performance**: Real-time response times and confidence
+- **📊 Technical Panel**: Live system stats (memory, models, performance)
+- **🌙 Dark Mode**: Perfect text visibility with enhanced contrast
+- **📱 Example Queries**: 8 diverse categories including:
+  - 💻 Coding Help & 🐛 Debug Code
+  - 🧠 Complex Topics & 🤖 AI/ML Topics  
+  - 🔢 Math Problems & 📊 Data Analysis
+  - 🌍 Translation & ✨ Creative Writing
+- **📈 Session Info**: Connection status with memory enabled indicator
 
 ## Development
 

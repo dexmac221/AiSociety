@@ -640,8 +640,25 @@ class IntelligentModelRouter:
         }
         
         if self.performance_history:
-            avg_time = sum(entry['response_time_ms'] for entry in self.performance_history) / len(self.performance_history)
-            stats['average_response_time'] = round(avg_time, 2)
+            try:
+                # Handle both response_time_ms (milliseconds) and response_time (seconds)
+                total_time = 0
+                valid_entries = 0
+                for entry in self.performance_history:
+                    if 'response_time_ms' in entry:
+                        total_time += entry['response_time_ms']
+                        valid_entries += 1
+                    elif 'response_time' in entry:
+                        # Convert seconds to milliseconds
+                        total_time += entry['response_time'] * 1000
+                        valid_entries += 1
+                
+                if valid_entries > 0:
+                    avg_time = total_time / valid_entries
+                    stats['average_response_time'] = round(avg_time, 2)
+            except Exception as e:
+                # If there's any error calculating average, just set to 0
+                stats['average_response_time'] = 0
         
         return stats
 

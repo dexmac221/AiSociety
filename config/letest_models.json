@@ -1,0 +1,309 @@
+[
+  {
+    "id": "DeepSeek-V3.1",
+    "params": 685000000000.0,
+    "active_params": 37000000000.0,
+    "context": 128000,
+    "modalities": [
+      "text"
+    ],
+    "strengths": [
+      "reasoning",
+      "math",
+      "code"
+    ],
+    "license": "DeepSeek License",
+    "hf_downloads": 108000
+  },
+  {
+    "id": "Qwen2.5-7B-Instruct",
+    "params": 7000000000.0,
+    "context": 131072,
+    "modalities": [
+      "text"
+    ],
+    "strengths": [
+      "instruction-following",
+      "multilingual",
+      "reasoning"
+    ],
+    "license": "Apache-2.0",
+    "hf_downloads": 11400000
+  },
+  {
+    "id": "Qwen2.5-Omni-7B",
+    "params": 7000000000.0,
+    "context": 128000,
+    "modalities": [
+      "text",
+      "image",
+      "audio",
+      "video"
+    ],
+    "strengths": [
+      "multimodal",
+      "real-time voice",
+      "streaming"
+    ],
+    "license": "Apache-2.0",
+    "hf_downloads": 180000
+  },
+  {
+    "id": "Llama-3.2-3B-Instruct",
+    "params": 3210000000.0,
+    "context": 128000,
+    "modalities": [
+      "text"
+    ],
+    "strengths": [
+      "multilingual",
+      "dialogue",
+      "efficiency"
+    ],
+    "license": "Llama 3.2 Community License",
+    "hf_downloads": 13100000
+  },
+  {
+    "id": "Llama-3.1-8B-Instruct",
+    "params": 8000000000.0,
+    "context": 128000,
+    "modalities": [
+      "text"
+    ],
+    "strengths": [
+      "reasoning",
+      "code",
+      "multilingual"
+    ],
+    "license": "Llama 3.1 Community License",
+    "hf_downloads": 9440000
+  },
+  {
+    "id": "Phi-4-14B",
+    "params": 14000000000.0,
+    "context": 16000,
+    "modalities": [
+      "text"
+    ],
+    "strengths": [
+      "math",
+      "reasoning",
+      "efficiency"
+    ],
+    "license": "MIT",
+    "hf_downloads": 850000
+  },
+  {
+    "id": "Gemma-3-27B-IT",
+    "params": 27000000000.0,
+    "context": 128000,
+    "modalities": [
+      "text",
+      "image"
+    ],
+    "strengths": [
+      "multilingual",
+      "multimodal",
+      "function-calling"
+    ],
+    "license": "Gemma License",
+    "hf_downloads": 750000
+  },
+  {
+    "id": "Gemma-3-4B-IT",
+    "params": 4000000000.0,
+    "context": 128000,
+    "modalities": [
+      "text",
+      "image"
+    ],
+    "strengths": [
+      "efficiency",
+      "multilingual",
+      "multimodal"
+    ],
+    "license": "Gemma License",
+    "hf_downloads": 950000
+  },
+  {
+    "id": "Gemma-3-1B-IT",
+    "params": 1000000000.0,
+    "context": 32000,
+    "modalities": [
+      "text"
+    ],
+    "strengths": [
+      "efficiency",
+      "edge-deployment"
+    ],
+    "license": "Gemma License",
+    "hf_downloads": 1200000
+  },
+  {
+    "id": "Mistral-7B-v0.3",
+    "params": 7000000000.0,
+    "context": 32768,
+    "modalities": [
+      "text"
+    ],
+    "strengths": [
+      "general-purpose",
+      "efficiency",
+      "function-calling"
+    ],
+    "license": "Apache-2.0",
+    "hf_downloads": 2500000
+  },
+  {
+    "id": "Mixtral-8x7B-v0.1",
+    "params": 56000000000.0,
+    "active_params": 12900000000.0,
+    "context": 32768,
+    "modalities": [
+      "text"
+    ],
+    "strengths": [
+      "multilingual",
+      "code",
+      "efficiency"
+    ],
+    "license": "Apache-2.0",
+    "hf_downloads": 3200000
+  },
+  {
+    "id": "Apertus-8B-Instruct-2509",
+    "params": 8000000000.0,
+    "context": 128000,
+    "modalities": [
+      "text"
+    ],
+    "strengths": [
+      "multilingual",
+      "transparency",
+      "european-ai"
+    ],
+    "license": "Apache-2.0",
+    "hf_downloads": 11000
+  },
+  {
+    "id": "Apertus-70B-Instruct-2509",
+    "params": 70000000000.0,
+    "context": 128000,
+    "modalities": [
+      "text"
+    ],
+    "strengths": [
+      "multilingual",
+      "transparency",
+      "european-ai"
+    ],
+    "license": "Apache-2.0",
+    "hf_downloads": 2270
+  },
+  {
+    "id": "OpenAI-GPT-oss-20B",
+    "params": 20000000000.0,
+    "context": 32000,
+    "modalities": [
+      "text"
+    ],
+    "strengths": [
+      "general-purpose",
+      "reasoning",
+      "function-calling"
+    ],
+    "license": "Apache-2.0",
+    "hf_downloads": 9660000
+  },
+  {
+    "id": "OpenAI-GPT-oss-120B",
+    "params": 120000000000.0,
+    "context": 32000,
+    "modalities": [
+      "text"
+    ],
+    "strengths": [
+      "advanced-reasoning",
+      "general-purpose"
+    ],
+    "license": "Apache-2.0",
+    "hf_downloads": 2790000
+  },
+  {
+    "id": "NVIDIA-Nemotron-Nano-12B-v2",
+    "params": 12000000000.0,
+    "context": 128000,
+    "modalities": [
+      "text"
+    ],
+    "strengths": [
+      "efficiency",
+      "enterprise",
+      "reasoning"
+    ],
+    "license": "NVIDIA Open Model License",
+    "hf_downloads": 22300
+  },
+  {
+    "id": "Apple-FastVLM-7B",
+    "params": 8000000000.0,
+    "context": 32000,
+    "modalities": [
+      "text"
+    ],
+    "strengths": [
+      "efficiency",
+      "mobile",
+      "on-device"
+    ],
+    "license": "Apple License",
+    "hf_downloads": 7640
+  },
+  {
+    "id": "NousResearch-Hermes-4-14B",
+    "params": 14000000000.0,
+    "context": 128000,
+    "modalities": [
+      "text"
+    ],
+    "strengths": [
+      "uncensored",
+      "creative",
+      "instruction-following"
+    ],
+    "license": "Apache-2.0",
+    "hf_downloads": 1760
+  },
+  {
+    "id": "DeepSeek-R1",
+    "params": 685000000000.0,
+    "active_params": 37000000000.0,
+    "context": 128000,
+    "modalities": [
+      "text"
+    ],
+    "strengths": [
+      "reasoning",
+      "thinking",
+      "chain-of-thought"
+    ],
+    "license": "DeepSeek License",
+    "hf_downloads": 395000
+  },
+  {
+    "id": "Qwen3-Coder-30B-A3B-Instruct",
+    "params": 30000000000.0,
+    "active_params": 3000000000.0,
+    "context": 131072,
+    "modalities": [
+      "text"
+    ],
+    "strengths": [
+      "code",
+      "programming",
+      "multilingual"
+    ],
+    "license": "Apache-2.0",
+    "hf_downloads": 311000
+  }
+]

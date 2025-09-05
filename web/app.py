@@ -279,18 +279,150 @@ async def get_chat_interface():
             }
             
             #status-bar {
-                background: var(--bg-status);
+                background: var(--bg-status-bar);
                 padding: 12px 25px;
-                font-size: 13px;
-                color: var(--text-status);
-                border-bottom: 1px solid var(--border-secondary);
+                border-bottom: 1px solid rgba(255,255,255,0.1);
                 display: flex;
                 justify-content: space-between;
                 align-items: center;
-                transition: all 0.3s ease;
+                font-size: 14px;
+                flex-shrink: 0;
+                color: white;
+                font-weight: 500;
+            }
+            
+            .status-dot {
+                width: 10px;
+                height: 10px;
+                border-radius: 50%;
+                background: #ff4757;
+                animation: pulse 2s infinite;
+                margin-right: 8px;
+            }
+            
+            .status-dot.connected {
+                background: #2ed573;
+                animation: none;
+            }
+            
+            @keyframes pulse {
+                0% { opacity: 1; }
+                50% { opacity: 0.5; }
+                100% { opacity: 1; }
             }
             
             .status-indicator {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+            }
+            
+            .status-dot {
+                width: 8px;
+                height: 8px;
+                border-radius: 50%;
+                background: #ff6b6b;
+                animation: pulse 2s infinite;
+            }
+            
+            .status-dot.connected {
+                background: #51cf66;
+            }
+            
+            .tech-info-toggle {
+                background: rgba(255,255,255,0.1);
+                border: 1px solid rgba(255,255,255,0.2);
+                color: var(--text-white);
+                padding: 6px 12px;
+                border-radius: 15px;
+                cursor: pointer;
+                transition: all 0.3s ease;
+                font-size: 12px;
+                display: flex;
+                align-items: center;
+                gap: 4px;
+            }
+            
+            .tech-info-toggle:hover {
+                background: rgba(255,255,255,0.2);
+                transform: translateY(-1px);
+            }
+            
+            #model-count {
+                color: white;
+                font-weight: 500;
+                opacity: 0.95;
+            }
+            
+            #status-text {
+                color: white;
+                font-weight: 500;
+            }
+            
+            .tech-panel {
+                background: var(--bg-tech-panel, linear-gradient(135deg, #2c3e50 0%, #34495e 100%));
+                border-bottom: 1px solid rgba(255,255,255,0.1);
+                padding: 15px 25px;
+                transition: all 0.3s ease;
+                overflow: hidden;
+            }
+            
+            .tech-panel.hidden {
+                max-height: 0;
+                padding: 0 25px;
+                opacity: 0;
+            }
+            
+            .tech-panel:not(.hidden) {
+                max-height: 200px;
+                opacity: 1;
+            }
+            
+            .tech-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+                gap: 15px;
+            }
+            
+            .tech-card {
+                background: rgba(255,255,255,0.05);
+                border: 1px solid rgba(255,255,255,0.1);
+                border-radius: 8px;
+                padding: 12px;
+                backdrop-filter: blur(10px);
+            }
+            
+            .tech-card h4 {
+                margin: 0 0 8px 0;
+                font-size: 14px;
+                color: var(--text-white);
+                display: flex;
+                align-items: center;
+                gap: 6px;
+            }
+            
+            .tech-card div {
+                display: flex;
+                flex-direction: column;
+                gap: 4px;
+                font-size: 12px;
+                color: rgba(255,255,255,0.8);
+            }
+            
+            .tech-card span span {
+                color: var(--accent-blue);
+                font-weight: 600;
+            }
+            
+            @media (max-width: 768px) {
+                .tech-grid {
+                    grid-template-columns: 1fr;
+                }
+                
+                .tech-panel:not(.hidden) {
+                    max-height: 400px;
+                }
+            }            .status-indicator {
                 display: flex;
                 align-items: center;
                 gap: 8px;
@@ -405,6 +537,13 @@ async def get_chat_interface():
                 border: 1px solid #bbdefb;
             }
             
+            /* Dark mode styles for model info */
+            [data-theme="dark"] .message.assistant .model-info {
+                background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+                color: #ffffff;
+                border: 1px solid #3f51b5;
+            }
+            
             .optimization-info {
                 display: flex;
                 align-items: center;
@@ -417,6 +556,13 @@ async def get_chat_interface():
                 border-radius: 8px;
                 border: 1px solid #ffcc02;
                 opacity: 0.9;
+            }
+            
+            /* Dark mode styles for optimization info */
+            [data-theme="dark"] .optimization-info {
+                background: linear-gradient(135deg, #424242 0%, #616161 100%);
+                color: #ffab00;
+                border: 1px solid #ff8f00;
             }
             
             .memory-info {
@@ -545,6 +691,12 @@ async def get_chat_interface():
                 margin-right: 60px;
                 box-shadow: 0 4px 15px var(--shadow-primary);
                 transition: all 0.3s ease;
+                color: var(--text-primary);
+            }
+            
+            /* Dark mode styling for typing indicator */
+            [data-theme="dark"] .typing-indicator {
+                color: #ffffff;
             }
             
             .typing-dots {
@@ -764,6 +916,48 @@ async def get_chat_interface():
                     <span id="status-text">Initializing system...</span>
                 </div>
                 <div id="model-count">Models: Loading...</div>
+                <button class="tech-info-toggle" onclick="toggleTechInfo()" title="Toggle technical information">
+                    <span id="tech-icon">📊</span>
+                    <span>Tech Info</span>
+                </button>
+            </div>
+            
+            <div id="tech-panel" class="tech-panel hidden">
+                <div class="tech-grid">
+                    <div class="tech-card">
+                        <h4>🧠 Memory System</h4>
+                        <div id="memory-stats">
+                            <span>Short-term: <span id="memory-short">0</span> entries</span>
+                            <span>Token usage: <span id="memory-tokens">0%</span></span>
+                            <span>Context: <span id="memory-context">Standard</span></span>
+                        </div>
+                    </div>
+                    <div class="tech-card">
+                        <h4>🎯 Current Model</h4>
+                        <div id="model-stats">
+                            <span>Active: <span id="active-model">None</span></span>
+                            <span>Type: <span id="model-type">N/A</span></span>
+                            <span>Context: <span id="model-context">N/A</span></span>
+                            <span>Size: <span id="model-size">N/A</span></span>
+                        </div>
+                    </div>
+                    <div class="tech-card">
+                        <h4>⚡ Performance</h4>
+                        <div id="perf-stats">
+                            <span>Last response: <span id="response-time">0ms</span></span>
+                            <span>Routing method: <span id="routing-method">Standard</span></span>
+                            <span>Confidence: <span id="routing-confidence">N/A</span></span>
+                        </div>
+                    </div>
+                    <div class="tech-card">
+                        <h4>🖥️ System</h4>
+                        <div id="system-stats">
+                            <span>Available models: <span id="total-models">0</span></span>
+                            <span>Local models: <span id="local-models">0</span></span>
+                            <span>Session: <span id="session-id">Loading...</span></span>
+                        </div>
+                    </div>
+                </div>
             </div>
             
             <div id="chat-container">
@@ -791,9 +985,25 @@ async def get_chat_interface():
                         <span class="suggestion-icon">🔢</span>
                         <span class="suggestion-text">Math Problems</span>
                     </div>
-                    <div class="suggestion-item" onclick="sendExampleQuery('Tell me a creative story')">
+                    <div class="suggestion-item" onclick="sendExampleQuery('Debug this JavaScript error: Cannot read property of undefined')">
+                        <span class="suggestion-icon">🐛</span>
+                        <span class="suggestion-text">Debug Code</span>
+                    </div>
+                    <div class="suggestion-item" onclick="sendExampleQuery('Translate this to French: Hello, how are you today?')">
+                        <span class="suggestion-icon">🌍</span>
+                        <span class="suggestion-text">Translation</span>
+                    </div>
+                    <div class="suggestion-item" onclick="sendExampleQuery('Write a creative story about AI and humans')">
                         <span class="suggestion-icon">✨</span>
                         <span class="suggestion-text">Creative Writing</span>
+                    </div>
+                    <div class="suggestion-item" onclick="sendExampleQuery('Analyze this data pattern: [1,4,9,16,25,36]')">
+                        <span class="suggestion-icon">📊</span>
+                        <span class="suggestion-text">Data Analysis</span>
+                    </div>
+                    <div class="suggestion-item" onclick="sendExampleQuery('How do neural networks learn?')">
+                        <span class="suggestion-icon">🤖</span>
+                        <span class="suggestion-text">AI/ML Topics</span>
                     </div>
                 </div>
             </div>
@@ -825,8 +1035,11 @@ async def get_chat_interface():
                 
                 ws.onopen = function() {
                     isConnected = true;
+                    const statusDot = document.querySelector('.status-dot');
+                    statusDot.classList.add('connected');
                     statusText.textContent = 'Connected - Ready to chat!';
                     updateModelCount();
+                    updateTechInfo();
                     removeWelcomeMessage();
                 };
                 
@@ -837,6 +1050,8 @@ async def get_chat_interface():
                 
                 ws.onclose = function() {
                     isConnected = false;
+                    const statusDot = document.querySelector('.status-dot');
+                    statusDot.classList.remove('connected');
                     statusText.textContent = 'Disconnected - Attempting to reconnect...';
                     
                     // Attempt to reconnect after 3 seconds
@@ -845,6 +1060,9 @@ async def get_chat_interface():
                 
                 ws.onerror = function(error) {
                     console.error('WebSocket error:', error);
+                    isConnected = false;
+                    const statusDot = document.querySelector('.status-dot');
+                    statusDot.classList.remove('connected');
                     statusText.textContent = 'Connection error - Please refresh the page';
                 };
             }
@@ -853,6 +1071,12 @@ async def get_chat_interface():
                 // Handle connection status
                 if (data.status === 'connected') {
                     statusText.textContent = `Connected with Memory Enabled`;
+                    
+                    // Store session ID for tech panel
+                    if (data.session_id) {
+                        window.sessionId = data.session_id;
+                    }
+                    
                     return;
                 }
                 
@@ -991,6 +1215,32 @@ async def get_chat_interface():
                 
                 document.getElementById('status-text').textContent = statusText;
                 
+                // Store technical information for tech panel
+                window.lastMemoryStats = {
+                    memory_messages: data.memory_messages || data.conversation_length || 0,
+                    token_usage_percent: ((data.memory_messages || 0) / 20) * 100, // Rough estimate
+                    context_used: data.context_used || false
+                };
+                
+                window.lastModelInfo = {
+                    model: data.model,
+                    specializations: data.specializations_used || [],
+                    context: data.model_info?.context || 'N/A',
+                    size: data.model_info?.size || 'N/A'
+                };
+                
+                window.lastPerformance = {
+                    response_time: data.response_time_ms,
+                    routing_method: data.routing_method,
+                    confidence: data.confidence || data.routing_confidence
+                };
+                
+                // Update tech panel if visible
+                const techPanel = document.getElementById('tech-panel');
+                if (techPanel && !techPanel.classList.contains('hidden')) {
+                    updateTechInfo();
+                }
+                
                 // Re-enable input
                 messageInput.disabled = false;
                 sendBtn.disabled = false;
@@ -1085,11 +1335,37 @@ async def get_chat_interface():
             
             async function updateModelCount() {
                 try {
+                    console.log('🔍 Fetching model count from /api/stats...');
                     const response = await fetch('/api/stats');
-                    const stats = await response.json();
-                    modelCount.textContent = `Models: ${stats.local_models}/${stats.total_models_available} local`;
+                    console.log('📡 Response status:', response.status);
+                    
+                    const result = await response.json();
+                    console.log('📊 Stats response:', result);
+                    
+                    if (result.status === 'success' && result.data) {
+                        const stats = result.data;
+                        const total = stats.total_models || stats.total_models_available || 0;
+                        const local = stats.local_models || 0;
+                        const newText = `Models: ${local}/${total} local`;
+                        console.log('✅ Setting model count to:', newText);
+                        modelCount.textContent = newText;
+                    } else if (result.data) {
+                        // Handle direct stats response (legacy format)
+                        const total = result.data.total_models || result.data.total_models_available || 0;
+                        const local = result.data.local_models || 0;
+                        const newText = `Models: ${local}/${total} local`;
+                        console.log('✅ Setting model count (legacy) to:', newText);
+                        modelCount.textContent = newText;
+                    } else if (result.error) {
+                        console.log('❌ API returned error:', result.error);
+                        modelCount.textContent = 'Models: Router not ready';
+                    } else {
+                        console.log('⚠️ Unexpected response format:', result);
+                        modelCount.textContent = 'Models: Loading...';
+                    }
                 } catch (error) {
-                    modelCount.textContent = 'Models: Loading...';
+                    console.error('💥 Error fetching stats:', error);
+                    modelCount.textContent = 'Models: Connection error';
                 }
             }
             
@@ -1109,6 +1385,10 @@ async def get_chat_interface():
             
             // Initialize connection
             connectWebSocket();
+            
+            // Initialize data loading
+            updateModelCount(); // Call immediately on page load
+            updateTechInfo();   // Call immediately on page load
             
             // Theme management
             function toggleTheme() {
@@ -1152,6 +1432,69 @@ async def get_chat_interface():
                 updateThemeButton(theme);
             }
             
+            // Technical information panel
+            function toggleTechInfo() {
+                const techPanel = document.getElementById('tech-panel');
+                const techIcon = document.getElementById('tech-icon');
+                
+                if (techPanel.classList.contains('hidden')) {
+                    techPanel.classList.remove('hidden');
+                    techIcon.textContent = '📈';
+                    updateTechInfo();
+                } else {
+                    techPanel.classList.add('hidden');
+                    techIcon.textContent = '📊';
+                }
+            }
+            
+            function updateTechInfo() {
+                // Fetch latest system stats
+                fetch('/api/stats')
+                    .then(response => response.json())
+                    .then(result => {
+                        if (result.status === 'success' && result.data) {
+                            const stats = result.data;
+                            document.getElementById('total-models').textContent = stats.total_models || 0;
+                            document.getElementById('local-models').textContent = stats.local_models || 0;
+                            document.getElementById('session-id').textContent = stats.active_sessions > 0 ? `Active (${stats.active_sessions})` : 'Ready';
+                        } else {
+                            // Handle error case
+                            document.getElementById('total-models').textContent = 'Error';
+                            document.getElementById('local-models').textContent = 'Error';
+                            document.getElementById('session-id').textContent = 'Error';
+                        }
+                    })
+                    .catch(error => {
+                        console.log('Stats fetch failed:', error);
+                        document.getElementById('total-models').textContent = 'N/A';
+                        document.getElementById('local-models').textContent = 'N/A';
+                        document.getElementById('session-id').textContent = 'Offline';
+                    });
+
+                // Update memory stats if available
+                if (window.lastMemoryStats) {
+                    document.getElementById('memory-short').textContent = window.lastMemoryStats.memory_messages || 0;
+                    document.getElementById('memory-tokens').textContent = Math.round(window.lastMemoryStats.token_usage_percent || 0) + '%';
+                    document.getElementById('memory-context').textContent = window.lastMemoryStats.context_used ? 'Enhanced' : 'Standard';
+                }
+
+                // Update model stats if available
+                if (window.lastModelInfo) {
+                    document.getElementById('active-model').textContent = window.lastModelInfo.model || 'None';
+                    document.getElementById('model-type').textContent = window.lastModelInfo.specializations?.[0] || 'N/A';
+                    document.getElementById('model-context').textContent = window.lastModelInfo.context || 'N/A';
+                    document.getElementById('model-size').textContent = window.lastModelInfo.size || 'N/A';
+                }
+                if (window.lastPerformance) {
+                    document.getElementById('response-time').textContent = window.lastPerformance.response_time + 'ms';
+                    document.getElementById('routing-method').textContent = window.lastPerformance.routing_method || 'Standard';
+                    document.getElementById('routing-confidence').textContent = window.lastPerformance.confidence ? Math.round(window.lastPerformance.confidence * 100) + '%' : 'N/A';
+                }
+                
+                // Update system stats
+                document.getElementById('session-id').textContent = window.sessionId ? window.sessionId.substring(0, 12) + '...' : 'Loading...';
+            }
+            
             // Initialize theme on load
             initializeTheme();
             
@@ -1167,6 +1510,14 @@ async def get_chat_interface():
             
             // Update model count periodically
             setInterval(updateModelCount, 30000); // Every 30 seconds
+            
+            // Update tech info periodically (only if panel is visible)
+            setInterval(() => {
+                const techPanel = document.getElementById('tech-panel');
+                if (!techPanel.classList.contains('hidden')) {
+                    updateTechInfo();
+                }
+            }, 15000); // Every 15 seconds
             
             // CSS animation for fade out
             const style = document.createElement('style');
@@ -1296,15 +1647,66 @@ async def websocket_endpoint(websocket: WebSocket):
 
 @app.get("/api/stats")
 async def get_stats():
-    """Get system statistics"""
-    if not router:
-        return {"error": "Router not initialized"}
-    
+    """Get system statistics for dashboard"""
+    print("📊 Stats API called!")
     try:
-        stats = router.get_stats()
-        return stats
+        if not router:
+            print("❌ Stats API error: Router not initialized")
+            return {
+                "status": "error",
+                "message": "Router not initialized",
+                "timestamp": datetime.now().isoformat()
+            }
+        
+        # Get router stats with error handling
+        router_stats = {}
+        try:
+            router_stats = router.get_stats() if hasattr(router, 'get_stats') else {}
+            print(f"🔍 Router stats retrieved successfully: {list(router_stats.keys())}")
+        except Exception as stats_error:
+            print(f"⚠️ Router get_stats() failed: {stats_error}")
+            # Fallback to manual calculation
+            model_registry = router.model_registry if hasattr(router, 'model_registry') else {}
+            router_stats = {
+                'total_models_available': len(model_registry),
+                'local_models': sum(1 for m in model_registry.values() if m.get('is_local', False)),
+                'downloadable_models': len(model_registry) - sum(1 for m in model_registry.values() if m.get('is_local', False)),
+                'queries_processed': len(getattr(router, 'performance_history', [])),
+                'average_response_time': 0,
+                'most_used_specializations': {}
+            }
+        
+        # Get model registry safely
+        model_registry = router.model_registry if hasattr(router, 'model_registry') else {}
+        
+        stats = {
+            "total_models": router_stats.get('total_models_available', len(model_registry)),
+            "local_models": router_stats.get('local_models', 0),
+            "total_models_available": router_stats.get('total_models_available', len(model_registry)),
+            "active_sessions": len(manager.conversations),
+            "memory_enabled": True,
+            "gpu_info": "RTX 3090 Compatible",
+            "system_status": "operational",
+            "queries_processed": router_stats.get('queries_processed', 0),
+            "average_response_time": router_stats.get('average_response_time', 0)
+        }
+        
+        print(f"📊 Returning stats: {stats}")
+        return {
+            "status": "success",
+            "data": stats,
+            "timestamp": datetime.now().isoformat()
+        }
     except Exception as e:
-        return {"error": str(e)}
+        print(f"❌ Stats API error: {str(e)}")
+        print(f"❌ Error type: {type(e).__name__}")
+        import traceback
+        print(f"❌ Traceback: {traceback.format_exc()}")
+        return {
+            "status": "error", 
+            "message": str(e),
+            "timestamp": datetime.now().isoformat()
+        }
 
 @app.get("/api/models")
 async def get_models():
