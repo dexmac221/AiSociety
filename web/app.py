@@ -1,3 +1,23 @@
+#!/usr/bin/env python3
+"""
+AI Society Web Application
+
+FastAPI-based web interface for the AI Society dynamic model router.
+Provides real-time chat with conversation memory, multilingual support,
+and comprehensive model routing visualization.
+
+Features:
+- Real-time WebSocket chat interface
+- Conversation memory with FAISS indexing
+- Multilingual support with language detection
+- Technical dashboard with performance metrics
+- Dark/light theme with responsive design
+- Model routing transparency and optimization display
+
+Author: AI Society Contributors
+License: MIT
+"""
+
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect, HTTPException
 from fastapi.responses import HTMLResponse, FileResponse
 from fastapi.staticfiles import StaticFiles

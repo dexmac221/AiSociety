@@ -5,6 +5,48 @@ All notable changes to AI Society will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.3.0] - 2025-09-05
+
+### 🌍 Added
+- **Multilingual AI Enhancement** - Automatic language detection and translation using OpenAI
+- **Language Support** - Spanish, French, German, Italian, Portuguese, Japanese, Chinese, and more
+- **Intelligent Translation Layer** - Translates queries to English for optimal local model performance
+- **Response Language Instructions** - Local models respond in user's original language
+- **Real-time Language Panel** - Shows detection status and translation activity in web interface
+
+### 🔧 Changed
+- **Model Inventory Optimization** - Reduced from 16 to 14 models for better hardware compatibility
+- **Removed Oversized Models** - DeepSeek-R1:685B (370GB) and Qwen3-Coder:30B (17GB) removed
+- **Enhanced UI** - Dark mode fixes, improved model selection visibility
+- **Expanded Examples** - 8 diverse query categories including debugging and translation
+
+### 📝 Fixed
+- **README Formatting** - Fixed broken header, badges, and duplicate images
+- **Dark Mode Text** - Improved visibility in dark theme
+- **Model Selection Balloons** - Better contrast in both light and dark modes
+
+## [1.2.0] - 2025-09-04
+
+### 🧠 Added
+- **Conversation Memory System** - Multi-turn conversations with context awareness
+- **Hybrid Memory Architecture** - FAISS indexing with OpenAI summarization
+- **Smart References** - Understands "that code", "the previous example", etc.
+- **Session Management** - 10-message memory window with automatic cleanup
+- **Context Visualization** - Memory stats in web interface
+
+### ⚡ Enhanced
+- **Query Optimization** - OpenAI-powered query enhancement for better results
+- **Technical Dashboard** - Real-time performance metrics and model information
+- **Enhanced Routing** - Improved model selection with confidence scoring
+
+## [1.1.0] - 2025-09-04
+
+### 🎯 Added
+- **Latest 2025 Models** - Added 16 cutting-edge models including Phi-4, Hermes-4, Qwen3-Coder
+- **OpenAI Meta-Routing** - Intelligent model selection using GPT-4.1-mini
+- **Enhanced Web Interface** - Improved dark mode, expanded examples, technical panels
+- **Professional Documentation** - Visual schema diagrams and web interface screenshots
+
 ## [1.0.0] - 2025-09-04
 
 ### 🎉 Initial Release

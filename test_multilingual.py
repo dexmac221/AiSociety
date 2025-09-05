@@ -1,6 +1,14 @@
 #!/usr/bin/env python3
 """
-Test script for multilingual translation functionality
+Multilingual Translation System Test
+
+Test script for validating the multilingual capabilities of AI Society.
+Tests language detection, translation, and response language instructions
+across multiple languages including Spanish, French, German, Italian,
+Portuguese, Japanese, and Chinese.
+
+Author: AI Society Contributors
+License: MIT
 """
 
 import asyncio

@@ -1,6 +1,12 @@
 #!/usr/bin/env python3
 """
-Simple test for OpenAI language detection
+Simple OpenAI Translation Test
+
+Basic test script for validating OpenAI language detection and translation
+functionality. Used for debugging translation issues and API connectivity.
+
+Author: AI Society Contributors
+License: MIT
 """
 
 import asyncio

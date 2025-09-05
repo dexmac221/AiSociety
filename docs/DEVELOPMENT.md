@@ -11,6 +11,15 @@ This guide will help you set up a development environment for contributing to AI
 - **Ollama** - Local LLM management
 - **GPU with 8GB+ VRAM** - For model inference (RTX 3090 recommended)
 
+### Required Python Packages
+- **FastAPI** - Web framework
+- **uvicorn** - ASGI server
+- **ollama** - Ollama client library
+- **openai** - OpenAI API client (optional, for enhanced routing)
+- **sentence-transformers** - For conversation memory embeddings
+- **faiss-cpu** - Vector similarity search for memory system
+- **python-dotenv** - Environment variable management
+
 ### Optional Development Tools
 
 - **VS Code** - Recommended IDE with Python extension
@@ -41,7 +50,22 @@ chmod +x setup.sh
 source venv/bin/activate
 ```
 
-### 3. Install Development Dependencies
+### 3. Configure OpenAI API (Optional but Recommended)
+
+For enhanced routing and multilingual support:
+
+```bash
+# Copy and edit API configuration
+cp config/api_config.env config/.env
+nano config/.env
+
+# Add your OpenAI API key:
+OPENAI_API_KEY=your_actual_openai_api_key_here
+# Remove or comment out the placeholder org ID:
+# OPENAI_ORG_ID=your_org_id_here_optional
+```
+
+### 4. Install Development Dependencies
 
 ```bash
 # Install additional development tools

@@ -1,7 +1,7 @@
 # AI Society - LLM Model Router
 
 ## 🎯 Project Overview
-A Python-based model routing system that helps select appropriate local LLMs for different types of queries. Provides a web interface and can optionally use OpenAI's API for routing decisions.
+A Python-based model routing system that helps select appropriate local LLMs for different types of queries. Features advanced multilingual support, conversation memory, and OpenAI-enhanced routing for intelligent model selection.
 
 ## 📁 Project Structure
 ```
@@ -11,16 +11,22 @@ ai-society/
 │   ├── daemon/
 │   │   ├── __init__.py
 │   │   └── model_discovery.py          # Ollama library scanner
+│   ├── memory/
+│   │   ├── __init__.py
+│   │   └── hybrid_memory.py            # Conversation memory system
 │   └── routing/
 │       ├── __init__.py
 │       ├── intelligent_router.py       # Model selection logic
 │       ├── enhanced_intelligent_router.py # OpenAI-enhanced routing
-│       └── openai_meta_router.py       # OpenAI API integration
+│       └── openai_meta_router.py       # OpenAI API integration + multilingual
 ├── web/
 │   └── app.py                         # FastAPI web application
 ├── config/
-│   └── router_config.json             # System configuration
+│   ├── router_config.json             # System configuration
+│   ├── model_selection.json           # Latest 2025 models (14 total)
+│   └── api_config.env                 # API keys and configuration
 ├── data/                              # Auto-created: model cache & performance data
+│   └── memory/                        # Conversation memory storage
 ├── venv/                              # Auto-created: virtual environment
 ├── logs/                              # Auto-created: application logs
 ├── .github/
@@ -29,6 +35,9 @@ ai-society/
 ├── setup.sh                          # Automated setup script (executable)
 ├── start.sh                          # Quick start script (executable)  
 ├── test_system.py                     # System testing script (executable)
+├── test_multilingual.py              # Multilingual testing script
+└── README.md                         # Documentation
+```
 ├── test_direct_openai.py              # OpenAI integration test
 ├── main.py                           # Alternative entry point
 └── README.md                         # Documentation
@@ -50,25 +59,42 @@ python web/app.py
 ```
 
 ## 🔧 Technical Architecture
-- **Model Discovery**: Scans Ollama library for available models
-- **Routing Logic**: Analyzes queries and selects appropriate models  
-- **Optional OpenAI Integration**: Uses GPT models for routing decisions
-- **Web Interface**: FastAPI + WebSocket for real-time chat
-- **Performance Tracking**: Basic monitoring of model usage
+- **Model Discovery**: Scans Ollama library for available models (14 latest 2025 models)
+- **Multilingual Support**: Automatic language detection and translation using OpenAI
+- **Conversation Memory**: Hybrid memory system with FAISS indexing and context awareness
+- **Routing Logic**: Analyzes queries and selects appropriate models with confidence scoring
+- **OpenAI Integration**: Uses GPT-4.1-mini for routing decisions and query optimization
+- **Web Interface**: FastAPI + WebSocket for real-time chat with memory and language indicators
+- **Performance Tracking**: Comprehensive monitoring of model usage and response times
 
 ## 🎨 Web Interface Features
 - Real-time WebSocket chat at http://localhost:8000
-- Shows which model handled each query
-- Basic performance metrics and response times
-- Mobile responsive design
-- API documentation at http://localhost:8000/docs
+- Shows which model handled each query with confidence scores
+- Conversation memory indicators and context usage
+- Language detection and translation status
+- Technical dashboard with performance metrics, memory stats, and model information
+- Mobile responsive design with enhanced dark mode
+- 8 diverse example categories for easy testing
 
-## 🤖 Model Types
-- **Coding**: qwen2.5-coder:7b, codellama:7b
-- **Math**: phi3:mini, qwen2.5:7b  
-- **General**: llama3.2:3b, gemma2:9b
-- **Reasoning**: mistral:7b, yi:9b
-- **Conversation**: neural-chat:7b, vicuna:7b
+## 🤖 Model Categories (14 Total)
+- **Coding**: Qwen2.5-Coder:7B, DeepSeek-Coder-v2:16B, CodeLlama:7B
+- **Math**: Phi-4:14B, Qwen2.5:7B, Phi3:mini
+- **Creative**: Hermes-4:14B, Yi:9B, Neural-Chat:7B
+- **Multimodal**: Qwen2.5-Omni:7B, Gemma-3:27B/4B, Gemma-3:1B
+- **General**: Qwen2.5:7B, Llama3.1:8B, Mistral:7B, OpenAI-OSS:20B
+- **Efficiency**: Apple-FastVLM:7B, NVIDIA-Nemotron-Nano:12B
+
+## 🌍 Multilingual Features
+- **Language Detection**: Automatic identification of 20+ languages
+- **Translation Layer**: OpenAI-powered translation to English for optimal model performance
+- **Response Instructions**: Models respond in user's original language
+- **Real-time Indicators**: Language panel shows detection and translation status
+
+## 🧠 Memory System
+- **Hybrid Architecture**: FAISS vector indexing + OpenAI summarization
+- **Context Awareness**: Multi-turn conversations with smart references
+- **Session Management**: 10-message memory window with automatic cleanup
+- **Performance Tracking**: Memory usage and context effectiveness metrics
 
 ## 🔌 API Endpoints
 - `ws://localhost:8000/ws` - WebSocket chat

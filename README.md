@@ -1,6 +1,18 @@
 # AI Society - LLM Model Router
 
-[![Pyth## 🎯 Model Inventory (2025 Latest)
+[![Python 3.8+](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![Ollama](https://img.shields.io/badge/Ollama-Compatible-green.svg)](https://ollama.com/)
+[![OpenAI](https://img.shields.io/badge/OpenAI-Enhanced-orange.svg)](https://openai.com/)
+
+> 🎯 **Democratizing AI Access with Intelligent Routing**  
+> A Python-based model routing system that helps select appropriate local LLMs for different types of queries. Features advanced multilingual support, conversation memory, and can optionally use OpenAI's API for intelligent routing decisions.
+
+![AI Society Web Interface](web_interface.png)
+
+![System Architecture](schema_color.png)
+
+## 🎯 Model Inventory (2025 Latest)
 
 Our system features **14 cutting-edge models** from 2025's breakthrough releases:
 
@@ -17,10 +29,20 @@ Our system features **14 cutting-edge models** from 2025's breakthrough releases
 ### 🎨 **Creative Specialists**
 - **Hermes-4:14B** - NousResearch's latest uncensored creative model
 - **Yi:9B** - Long-form content, poetry, fiction
-- **Neural-Chat:7B** - Dialogue, conversation, roleplayhttps://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
-[![Ollama](https://img.shields.io/badge/Ollama-Compatible-green.svg)](https://ollama.com/)
-[![OpenAI](https://img.shields.io/badge/OpenAI-Enhanced-orange.svg)](https://openai.com/)
+- **Neural-Chat:7B** - Dialogue, conversation, roleplay
+
+### 🌐 **Multimodal & Efficiency**
+- **Qwen2.5-Omni:7B** - Real-time voice, text, image, audio, video
+- **Gemma-3:27B/4B** - Google's latest multimodal models  
+- **Gemma-3:1B** - Ultra-efficient edge deployment
+- **Apple-FastVLM:7B** - Mobile-optimized multimodal
+- **NVIDIA-Nemotron-Nano:12B** - Enterprise-grade efficiency
+
+### 🎯 **General Purpose**
+- **Qwen2.5:7B** - Excellent instruction following and multilingual
+- **Llama3.1:8B** - Meta's latest reasoning and code model
+- **Mistral:7B** - Advanced reasoning and function calling
+- **OpenAI-OSS:20B** - Advanced reasoning, RTX 3090 compatible
 
 ## 🎉 Recent Major Updates
 
@@ -175,12 +197,6 @@ chmod +x start.sh
    - **Web Interface**: http://localhost:8000
    - **API Documentation**: http://localhost:8000/docs
    - **Health Check**: http://localhost:8000/api/health
-
-## 🎨 Web Interface Showcase
-
-![AI Society Web Interface](web_interface.png)
-
-*Experience the enhanced 2025 interface featuring dark mode optimization, real-time technical panels, conversation memory indicators, and 8 diverse example query categories.*
 
 ## 🚀 New Features Showcase
 
@@ -414,8 +430,6 @@ All models are automatically discovered and can be downloaded on-demand through 
 - `POST /api/refresh` - Refresh model registry
 
 ## Web Interface
-
-![AI Society Web Interface](web_interface.png)
 
 ### **Enhanced Chat Experience**
 
